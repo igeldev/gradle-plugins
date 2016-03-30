@@ -8,8 +8,10 @@ class GroovyPublishPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project target) {
-        if (!target.plugins.hasPlugin('groovy')) {
-            throw new GradleException("plugin 'groovy' should be applied first")
+        target.afterEvaluate {
+            if (!target.plugins.hasPlugin('groovy')) {
+                throw new GradleException("plugin 'groovy' should be applied")
+            }
         }
     }
 
