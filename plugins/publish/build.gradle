@@ -1,9 +1,5 @@
 apply plugin: 'groovy'
 
-repositories {
-    jcenter()
-}
-
 dependencies {
     compile gradleApi()
 }

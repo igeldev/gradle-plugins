@@ -1,0 +1,39 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenLocal()
+    }
+
+    if (!project.hasProperty('use-maven')) {
+        dependencies {
+            classpath 'igel.gradle:publish:1.0.0'
+        }
+    }
+}
+
+subprojects {
+    repositories {
+        jcenter()
+        mavenLocal()
+    }
+
+    group = 'igel.gradle'
+}
+
+project('publish') {
+    version = '1.0.0'
+
+    if (!project.hasProperty('use-maven')) {
+        apply plugin: 'igel.publish.groovy'
+    } else {
+        apply plugin: 'maven-publish'
+
+        publishing {
+            publications {
+                maven(MavenPublication) {
+                    from components.java
+                }
+            }
+        }
+    }
+}
