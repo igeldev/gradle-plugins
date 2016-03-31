@@ -4,7 +4,10 @@ buildscript {
         mavenLocal()
     }
 
-    if (!project.hasProperty('use-maven')) {
+    // sometimes we cannot use 'igel.publish.groovy' plugin
+    // to publish itself so we will use simple 'maven-publish'
+    // gradle property 'disable-self' will be a flag
+    if (!project.hasProperty('disable-self')) {
         dependencies {
             classpath 'igel.gradle:publish:1.0.0'
         }
@@ -18,22 +21,4 @@ subprojects {
     }
 
     group = 'igel.gradle'
-}
-
-project('publish') {
-    version = '1.0.0'
-
-    if (!project.hasProperty('use-maven')) {
-        apply plugin: 'igel.publish.groovy'
-    } else {
-        apply plugin: 'maven-publish'
-
-        publishing {
-            publications {
-                maven(MavenPublication) {
-                    from components.java
-                }
-            }
-        }
-    }
 }

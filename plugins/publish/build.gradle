@@ -3,3 +3,55 @@ apply plugin: 'groovy'
 dependencies {
     compile gradleApi()
 }
+
+version = '1.0.0'
+
+if (!project.hasProperty('disable-self')) {
+    apply plugin: 'igel.publish.groovy'
+
+    publishGroovy {
+        pom {
+            name 'Gradle Publish plug-ins'
+            // because tag 'description' conflicts with project.description
+            description([:], 'Gradle plug-ins to publish artifacts to Maven local and JCenter repositories.')
+            url 'https://github.com/igeldev/gradle-plugins'
+            licenses {
+                license {
+                    name 'Apache License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+            scm {
+                url 'https://github.com/igeldev/gradle-plugins'
+                connection 'scm:git@github.com:igeldev/gradle-plugins.git'
+                developerConnection 'scm:git@github.com:igeldev/gradle-plugins.git'
+            }
+            issueManagement {
+                system 'GitHub'
+                url 'https://github.com/igeldev/gradle-plugins/issues'
+            }
+            developers {
+                developer {
+                    id 'stefan'
+                    name 'Pavel Stepanov'
+                    url 'https://github.com/stefan-nsk'
+                    roles {
+                        role 'architect'
+                        role 'developer'
+                    }
+                }
+            }
+        }
+    }
+} else {
+    apply plugin: 'maven-publish'
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.java
+            }
+        }
+    }
+}
