@@ -38,6 +38,7 @@ class GroovyPublishPlugin implements Plugin<Project> {
 
     }
 
+    private Project project
     private MavenPublication publication
 
     private boolean configurePomDone
@@ -63,9 +64,25 @@ class GroovyPublishPlugin implements Plugin<Project> {
         publication.pom.withXml(action)
     }
 
+    private boolean configureBintrayDone
+
+    private void configureBintray(Closure bintrayClosure) {
+        // ensure user doesn't try to configure pom twice
+        if (configurePomDone) {
+            throw new GradleException('bintray is already configured')
+        }
+        configurePomDone = true
+
+        // delegate closure to bintray extension
+        bintrayClosure.delegate = project.extensions['bintray']
+        bintrayClosure.call()
+    }
+
 
     @Override
     void apply(Project target) {
+        this.project = target
+
         // check that 'groovy' plugin is applied
         // because we need 'java' component and 'main' source set
         if (!target.plugins.hasPlugin('groovy')) {
@@ -89,6 +106,15 @@ class GroovyPublishPlugin implements Plugin<Project> {
             from target.components.java
             artifact sourcesJarTask
         }
+
+        // apply bintray plugin
+        target.apply plugin: 'com.jfrog.bintray'
+
+        // set default values for bintray
+        target.extensions['bintray'].publications = ['maven']
+        target.extensions['bintray'].pkg.name = project.name
+        target.extensions['bintray'].pkg.desc = project.description
+        target.extensions['bintray'].pkg.version.name = project.version
 
         // create our extension to get user's preferences
         target.extensions.create('publishGroovy', Extension, this)

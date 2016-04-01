@@ -2,6 +2,7 @@ apply plugin: 'groovy'
 
 dependencies {
     compile gradleApi()
+    compile 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
 }
 
 version = '1.0.0'
@@ -41,6 +42,21 @@ if (!project.hasProperty('disable-self')) {
                         role 'developer'
                     }
                 }
+            }
+        }
+        bintray {
+            user = 'bintray_user' // todo configure
+            key = 'bintray_api_key' // todo configure
+            pkg {
+                repo = 'gradle-plugins'
+                websiteUrl = 'https://github.com/igeldev/gradle-plugins'
+                issueTrackerUrl = 'https://github.com/igeldev/batrak/issues'
+                vcsUrl = 'https://github.com/igeldev/batrak'
+                licenses = ['Apache-2.0']
+                labels = ['task']
+                publicDownloadNumbers = true
+                githubRepo = 'igeldev/gradle-plugins'
+                githubReleaseNotesFile = 'README.rst'
             }
         }
     }
