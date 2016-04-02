@@ -45,8 +45,8 @@ if (!project.hasProperty('disable-self')) {
             }
         }
         bintray {
-            user = 'bintray_user' // todo configure
-            key = 'bintray_api_key' // todo configure
+            user = project.hasProperty('bintray.user') ? project['bintray.user'] : 'anonymous'
+            key = project.hasProperty('bintray.key') ? project['bintray.key'] : '???'
             pkg {
                 repo = 'gradle-plugins'
                 websiteUrl = 'https://github.com/igeldev/gradle-plugins'
