@@ -50,8 +50,8 @@ if (!project.hasProperty('disable-self')) {
             pkg {
                 repo = 'gradle-plugins'
                 websiteUrl = 'https://github.com/igeldev/gradle-plugins'
-                issueTrackerUrl = 'https://github.com/igeldev/batrak/issues'
-                vcsUrl = 'https://github.com/igeldev/batrak'
+                issueTrackerUrl = 'https://github.com/igeldev/gradle-plugins/issues'
+                vcsUrl = 'https://github.com/igeldev/gradle-plugins'
                 licenses = ['Apache-2.0']
                 labels = ['task']
                 publicDownloadNumbers = true
