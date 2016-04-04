@@ -53,7 +53,7 @@ if (!project.hasProperty('disable-self')) {
                 issueTrackerUrl = 'https://github.com/igeldev/gradle-plugins/issues'
                 vcsUrl = 'https://github.com/igeldev/gradle-plugins'
                 licenses = ['Apache-2.0']
-                labels = ['task']
+                labels = ['gradle', 'plugin']
                 publicDownloadNumbers = true
                 githubRepo = 'igeldev/gradle-plugins'
                 githubReleaseNotesFile = 'README.rst'
