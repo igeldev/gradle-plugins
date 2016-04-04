@@ -1,3 +1,8 @@
+buildscript {
+    repositories { jcenter(); mavenLocal() }
+    dependencies { classpath 'igel.gradle:publish:1.0.0' }
+}
+
 apply plugin: 'groovy'
 
 repositories {
@@ -7,4 +12,60 @@ repositories {
 dependencies {
     compile 'org.codehaus.groovy:groovy:2.4.6'
     testCompile 'junit:junit:4.12'
+}
+
+group = 'igel.example'
+version = '1.0.0'
+
+apply plugin: 'igel.publish.groovy'
+
+publishGroovy {
+    pom {
+        name 'Groovy sample library'
+        // because tag 'description' conflicts with project.description
+        description([:], 'Description of Groovy sample library')
+        url 'https://github.com/igeldev/gradle-plugins'
+        licenses {
+            license {
+                name 'Apache License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution 'repo'
+            }
+        }
+        scm {
+            url 'https://github.com/igeldev/gradle-plugins'
+            connection 'scm:git@github.com:igeldev/gradle-plugins.git'
+            developerConnection 'scm:git@github.com:igeldev/gradle-plugins.git'
+        }
+        issueManagement {
+            system 'GitHub'
+            url 'https://github.com/igeldev/gradle-plugins/issues'
+        }
+        developers {
+            developer {
+                id 'stefan'
+                name 'Pavel Stepanov'
+                url 'https://github.com/stefan-nsk'
+                roles {
+                    role 'architect'
+                    role 'developer'
+                }
+            }
+        }
+    }
+    bintray {
+        user = project.hasProperty('bintray.user') ? project['bintray.user'] : 'anonymous'
+        key = project.hasProperty('bintray.key') ? project['bintray.key'] : '???'
+        pkg {
+            repo = 'gradle-plugins'
+            websiteUrl = 'https://github.com/igeldev/gradle-plugins'
+            issueTrackerUrl = 'https://github.com/igeldev/gradle-plugins/issues'
+            vcsUrl = 'https://github.com/igeldev/gradle-plugins'
+            licenses = ['Apache-2.0']
+            labels = ['example']
+            publicDownloadNumbers = true
+            githubRepo = 'igeldev/gradle-plugins'
+            githubReleaseNotesFile = 'README.rst'
+        }
+    }
 }
