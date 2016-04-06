@@ -86,7 +86,7 @@ class GroovyPublishPlugin implements Plugin<Project> {
         // check that 'groovy' plugin is applied
         // because we need 'java' component and 'main' source set
         if (!target.plugins.hasPlugin('groovy')) {
-            throw new GradleException('plugin \'groovy\' should be applied')
+            throw new GradleException('plugin \'groovy\' should be applied first')
         }
 
         // create a task to prepare source code jar
