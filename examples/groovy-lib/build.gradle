@@ -1,6 +1,11 @@
 buildscript {
-    repositories { jcenter(); mavenLocal() }
-    dependencies { classpath 'igel.gradle:publish:1.0.0' }
+    repositories {
+        jcenter()
+        mavenLocal()
+    }
+    dependencies {
+        classpath 'igel.gradle:publish:1.0.0'
+    }
 }
 
 apply plugin: 'groovy'
