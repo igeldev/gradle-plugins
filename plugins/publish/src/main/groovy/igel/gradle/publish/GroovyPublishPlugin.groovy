@@ -36,6 +36,10 @@ class GroovyPublishPlugin implements Plugin<Project> {
             plugin.configurePom(pom)
         }
 
+        void bintray(Closure bintray) {
+            plugin.configureBintray(bintray)
+        }
+
     }
 
     private Project project
@@ -68,16 +72,24 @@ class GroovyPublishPlugin implements Plugin<Project> {
 
     private void configureBintray(Closure bintrayClosure) {
         // ensure user doesn't try to configure pom twice
-        if (configurePomDone) {
+        if (configureBintrayDone) {
             throw new GradleException('bintray is already configured')
         }
-        configurePomDone = true
+        configureBintrayDone = true
+
+        // apply bintray plugin
+        project.apply plugin: 'com.jfrog.bintray'
+
+        // set default values for bintray
+        project.extensions['bintray'].publications = [publication.name]
+        project.extensions['bintray'].pkg.name = project.name
+        project.extensions['bintray'].pkg.desc = project.description
+        project.extensions['bintray'].pkg.version.name = project.version
 
         // delegate closure to bintray extension
         bintrayClosure.delegate = project.extensions['bintray']
         bintrayClosure.call()
     }
-
 
     @Override
     void apply(Project target) {
@@ -106,15 +118,6 @@ class GroovyPublishPlugin implements Plugin<Project> {
             from target.components.java
             artifact sourcesJarTask
         }
-
-        // apply bintray plugin
-        target.apply plugin: 'com.jfrog.bintray'
-
-        // set default values for bintray
-        target.extensions['bintray'].publications = ['maven']
-        target.extensions['bintray'].pkg.name = project.name
-        target.extensions['bintray'].pkg.desc = project.description
-        target.extensions['bintray'].pkg.version.name = project.version
 
         // create our extension to get user's preferences
         target.extensions.create('publishGroovy', Extension, this)
