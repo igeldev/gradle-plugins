@@ -80,11 +80,8 @@ class GroovyPublishPlugin implements Plugin<Project> {
         // apply bintray plugin
         project.apply plugin: 'com.jfrog.bintray'
 
-        // set default values for bintray
+        // set publication for bintray
         project.extensions['bintray'].publications = [publication.name]
-        project.extensions['bintray'].pkg.name = project.name
-        project.extensions['bintray'].pkg.desc = project.description
-        project.extensions['bintray'].pkg.version.name = project.version
 
         // delegate closure to bintray extension
         bintrayClosure.delegate = project.extensions['bintray']
