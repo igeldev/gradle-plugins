@@ -5,6 +5,7 @@ dependencies {
     compile 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
 }
 
+description = 'Gradle plug-ins to publish artifacts to Maven local and JCenter repositories.'
 version = '1.0.0'
 
 if (!project.hasProperty('disable-self')) {
@@ -14,7 +15,7 @@ if (!project.hasProperty('disable-self')) {
         pom {
             name 'Gradle Publish plug-ins'
             // because tag 'description' conflicts with project.description
-            description([:], 'Gradle plug-ins to publish artifacts to Maven local and JCenter repositories.')
+            description([:], project.description)
             url 'https://github.com/igeldev/gradle-plugins'
             licenses {
                 license {
@@ -49,14 +50,8 @@ if (!project.hasProperty('disable-self')) {
             key = project.hasProperty('bintray.key') ? project['bintray.key'] : '???'
             pkg {
                 repo = 'gradle-plugins'
-                websiteUrl = 'https://github.com/igeldev/gradle-plugins'
-                issueTrackerUrl = 'https://github.com/igeldev/gradle-plugins/issues'
-                vcsUrl = 'https://github.com/igeldev/gradle-plugins'
-                licenses = ['Apache-2.0']
-                labels = ['gradle', 'plugin']
-                publicDownloadNumbers = true
-                githubRepo = 'igeldev/gradle-plugins'
-                githubReleaseNotesFile = 'README.rst'
+                name = 'publish'
+                version.name = project.version
             }
         }
     }
