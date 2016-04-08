@@ -10,8 +10,6 @@ The goal of this plugin is to make easier publishing Groovy libraries to `Bintra
 
 It uploads *binaries JAR*, *sources JAR* and *POM file* to **Maven local repository** and / or **JCenter**.
 
-Example of Groovy library project configuration is placed `here <examples/groovy-lib>`__.
-
 Usage
 -----
 
@@ -41,6 +39,7 @@ Usage
        group = 'com.example'
        version = '1.2.3'
 
+       // should be placed AFTER group and version are set
        apply plugin: 'igel.publish.groovy'
 
 3. Rename project if it is needed (project name is used as artifact ID):
