@@ -22,7 +22,7 @@ import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
 
-class GroovyPublishPlugin implements Plugin<Project> {
+class GroovyPublishPlugin extends BasePublishPlugin {
 
     static class Extension {
 
@@ -90,6 +90,8 @@ class GroovyPublishPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project target) {
+        super.apply(target)
+
         this.project = target
 
         // check that 'groovy' plugin is applied
