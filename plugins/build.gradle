@@ -1,7 +1,7 @@
 buildscript {
     repositories {
-        jcenter()
         mavenLocal()
+        jcenter()
     }
 
     // sometimes we cannot use 'igel.publish.groovy' plugin
