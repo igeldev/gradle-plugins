@@ -56,7 +56,7 @@ abstract class BasePublishPlugin implements Plugin<Project> {
 
     private boolean configurePomDone
 
-    private void configurePom(Closure pomClosure) {
+    protected void configurePom(Closure pomClosure) {
         // ensure user doesn't try to configure pom twice
         if (configurePomDone) {
             throw new GradleException('pom is already configured')
@@ -79,7 +79,7 @@ abstract class BasePublishPlugin implements Plugin<Project> {
 
     private boolean configureBintrayDone
 
-    private void configureBintray(Closure bintrayClosure) {
+    protected void configureBintray(Closure bintrayClosure) {
         // ensure user doesn't try to configure pom twice
         if (configureBintrayDone) {
             throw new GradleException('bintray is already configured')
