@@ -16,84 +16,17 @@
 
 package igel.gradle.publish
 
-import groovy.xml.MarkupBuilder
-import org.gradle.api.*
-import org.gradle.api.publish.PublicationContainer
+import org.gradle.api.Action
+import org.gradle.api.GradleException
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
 
 class GroovyPublishPlugin extends BasePublishPlugin {
 
-    static class Extension {
-
-        private final GroovyPublishPlugin plugin
-
-        Extension(GroovyPublishPlugin plugin) {
-            this.plugin = plugin
-        }
-
-        void pom(Closure pom) {
-            plugin.configurePom(pom)
-        }
-
-        void bintray(Closure bintray) {
-            plugin.configureBintray(bintray)
-        }
-
-    }
-
-    private Project project
-    private MavenPublication publication
-
-    private boolean configurePomDone
-
-    private void configurePom(Closure pomClosure) {
-        // ensure user doesn't try to configure pom twice
-        if (configurePomDone) {
-            throw new GradleException('pom is already configured')
-        }
-        configurePomDone = true
-
-        Action<XmlProvider> action = { XmlProvider xmlProvider ->
-            // create our pom.xml using markup builder
-            StringWriter xmlWriter = new StringWriter()
-            MarkupBuilder xmlBuilder = new MarkupBuilder(xmlWriter)
-            xmlBuilder.pom pomClosure
-
-            // merge our pom.xml with the default one
-            Node pomNode = new XmlParser().parseText(xmlWriter.toString())
-            pomNode.children().each { Node child -> xmlProvider.asNode().append(child) }
-        }
-
-        publication.pom.withXml(action)
-    }
-
-    private boolean configureBintrayDone
-
-    private void configureBintray(Closure bintrayClosure) {
-        // ensure user doesn't try to configure pom twice
-        if (configureBintrayDone) {
-            throw new GradleException('bintray is already configured')
-        }
-        configureBintrayDone = true
-
-        // apply bintray plugin
-        project.apply plugin: 'com.jfrog.bintray'
-
-        // set publication for bintray
-        project.extensions['bintray'].publications = [publication.name]
-
-        // delegate closure to bintray extension
-        bintrayClosure.delegate = project.extensions['bintray']
-        bintrayClosure.call()
-    }
-
     @Override
-    void apply(Project target) {
-        super.apply(target)
-
-        this.project = target
-
+    protected Action<MavenPublication> getMavenConfiguration(Project target) {
         // check that 'groovy' plugin is applied
         // because we need 'java' component and 'main' source set
         if (!target.plugins.hasPlugin('groovy')) {
@@ -108,18 +41,11 @@ class GroovyPublishPlugin extends BasePublishPlugin {
             from target.sourceSets.main.allSource
         }
 
-        // apply 'maven-publish' plugin ...
-        target.apply plugin: 'maven-publish'
-
-        // ... and create new 'maven' publication
-        PublicationContainer publications = target.publishing.publications
-        publication = publications.create('maven', MavenPublication) {
-            from target.components.java
-            artifact sourcesJarTask
+        // return maven configuration
+        return { MavenPublication publication ->
+            publication.from target.components.java
+            publication.artifact sourcesJarTask
         }
-
-        // create our extension to get user's preferences
-        target.extensions.create('publishGroovy', Extension, this)
     }
 
 }
