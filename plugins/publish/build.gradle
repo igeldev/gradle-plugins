@@ -11,7 +11,7 @@ version = '1.0.0'
 if (!project.hasProperty('disable-self')) {
     apply plugin: 'igel.publish.groovy'
 
-    publishGroovy {
+    publish {
         pom {
             name 'Gradle Publish plug-ins'
             // because tag 'description' conflicts with project.description
