@@ -22,13 +22,14 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.javadoc.Groovydoc
 
 class GroovyPublishPlugin extends BasePublishPlugin {
 
     @Override
     protected Action<MavenPublication> getMavenConfiguration(Project target) {
         // check that 'groovy' plugin is applied
-        // because we need 'java' component and 'main' source set
+        // because we need 'java' component, 'main' source set and groovydoc task
         if (!target.plugins.hasPlugin('groovy')) {
             throw new GradleException('plugin \'groovy\' should be applied first')
         }
@@ -41,10 +42,21 @@ class GroovyPublishPlugin extends BasePublishPlugin {
             from target.sourceSets.main.allSource
         }
 
+        // create a task to prepare groovydoc jar
+        Groovydoc groovydocTask = target.tasks['groovydoc'] as Groovydoc
+        Task groovydocJarTask = target.task('groovydocJar', type: Jar,
+                dependsOn: groovydocTask) {
+            group = 'documentation'
+            description = 'Assembles a jar archive containing the Groovydoc API documentation.'
+            classifier = 'groovydoc'
+            from groovydocTask.destinationDir
+        }
+
         // return maven configuration
         return { MavenPublication publication ->
             publication.from target.components.java
             publication.artifact sourcesJarTask
+            publication.artifact groovydocJarTask
         }
     }
 
