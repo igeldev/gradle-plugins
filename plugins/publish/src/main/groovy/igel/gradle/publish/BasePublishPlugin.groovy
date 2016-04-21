@@ -35,9 +35,9 @@ abstract class BasePublishPlugin implements Plugin<Project> {
 
     static class Extension {
 
-        private final GroovyPublishPlugin plugin
+        private final BasePublishPlugin plugin
 
-        Extension(GroovyPublishPlugin plugin) {
+        Extension(BasePublishPlugin plugin) {
             this.plugin = plugin
         }
 
