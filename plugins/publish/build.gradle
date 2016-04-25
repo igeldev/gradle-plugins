@@ -2,7 +2,6 @@ apply plugin: 'groovy'
 
 dependencies {
     compile gradleApi()
-    compile 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
 }
 
 description = 'Gradle plug-ins to publish artifacts to Maven local and JCenter repositories.'
@@ -45,14 +44,18 @@ if (!project.hasProperty('disable-self')) {
                 }
             }
         }
-        bintray {
-            user = project.hasProperty('bintray.user') ? project['bintray.user'] : 'anonymous'
-            key = project.hasProperty('bintray.key') ? project['bintray.key'] : '???'
-            pkg {
-                repo = 'gradle-plugins'
-                name = 'publish'
-                version.name = project.version
-            }
+    }
+
+    apply plugin: 'com.jfrog.bintray'
+
+    bintray {
+        publications = ['maven']
+        user = project.hasProperty('bintray.user') ? project['bintray.user'] : 'anonymous'
+        key = project.hasProperty('bintray.key') ? project['bintray.key'] : '???'
+        pkg {
+            repo = 'gradle-plugins'
+            name = 'publish'
+            version.name = project.version
         }
     }
 } else {

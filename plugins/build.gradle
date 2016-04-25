@@ -10,6 +10,7 @@ buildscript {
     if (!project.hasProperty('disable-self')) {
         dependencies {
             classpath 'igel.gradle:publish:1.0.0'
+            classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
         }
     }
 }

@@ -45,10 +45,6 @@ abstract class BasePublishPlugin implements Plugin<Project> {
             plugin.configurePom(pom)
         }
 
-        void bintray(Closure bintray) {
-            plugin.configureBintray(bintray)
-        }
-
     }
 
     private Project project
@@ -75,26 +71,6 @@ abstract class BasePublishPlugin implements Plugin<Project> {
         }
 
         publication.pom.withXml(action)
-    }
-
-    private boolean configureBintrayDone
-
-    protected void configureBintray(Closure bintrayClosure) {
-        // ensure user doesn't try to configure pom twice
-        if (configureBintrayDone) {
-            throw new GradleException('bintray is already configured')
-        }
-        configureBintrayDone = true
-
-        // apply bintray plugin
-        project.apply plugin: 'com.jfrog.bintray'
-
-        // set publication for bintray
-        project.extensions['bintray'].publications = [publication.name]
-
-        // delegate closure to bintray extension
-        bintrayClosure.delegate = project.extensions['bintray']
-        bintrayClosure.call()
     }
 
     /**
