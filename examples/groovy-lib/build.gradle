@@ -1,0 +1,14 @@
+apply plugin: 'groovy'
+
+group = 'igel.example'
+version = '1.2.3'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.6'
+    compile 'com.google.code.gson:gson:2.6.2'
+    testCompile 'junit:junit:4.12'
+}
