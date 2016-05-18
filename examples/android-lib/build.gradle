@@ -1,13 +1,16 @@
 buildscript {
     repositories {
+        mavenLocal()
         jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath 'igel.gradle:publish:1.0.0'
     }
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'igel.publish.android'
 
 group = 'igel.example'
 version = '1.2.3'

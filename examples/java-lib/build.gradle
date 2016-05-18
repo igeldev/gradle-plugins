@@ -1,4 +1,15 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath 'igel.gradle:publish:1.0.0'
+    }
+}
+
 apply plugin: 'java'
+apply plugin: 'igel.publish.java'
 
 group = 'igel.example'
 version = '1.2.3'
