@@ -20,4 +20,6 @@ android {
 dependencies {
     compile fileTree(dir: rootProject.file('libs'), include: ['*.jar'])
     compile fileTree(dir: project.file('libs'), include: ['*.jar'])
+    compile 'igel.example:android-lib:1.2.3'
+    compile 'igel.example:java-lib:1.2.3'
 }
