@@ -70,7 +70,12 @@ class AndroidPublishPlugin extends NewBasePublishPlugin<Extension> {
             classifier = "${variant.name}-sources"
 
             variant.sourceSets.each { sourceSet ->
+                // Java source
                 from sourceSet.java.sourceFiles
+
+                // AIDL source and generated code
+                from sourceSet.aidl.sourceFiles
+                from variant.aidlCompile.sourceOutputDir
             }
         }
     }
@@ -85,10 +90,16 @@ class AndroidPublishPlugin extends NewBasePublishPlugin<Extension> {
             destinationDir = new File(dir.parentFile, "$dir.name-$variant.name")
 
             variant.sourceSets.each { sourceSet ->
+                // Java source
                 source sourceSet.java.sourceFiles
+
+                // AIDL generated code
+                source variant.aidlCompile.sourceOutputDir
             }
+
             classpath = variant.javaCompile.classpath +
-                    project.files(variant.javaCompile.options.bootClasspath)
+                    project.files(variant.javaCompile.options.bootClasspath) +
+                    project.files(variant.javaCompile.destinationDir)
 
             options.links(
                     'https://developer.android.com/reference/',
