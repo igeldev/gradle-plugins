@@ -16,10 +16,8 @@
 
 package igel.gradle.publish
 
-import org.gradle.api.Action
-import org.gradle.api.GradleException
-import org.gradle.api.Project
-import org.gradle.api.Task
+import org.gradle.api.*
+import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
@@ -61,6 +59,14 @@ class AndroidPublishPlugin extends NewBasePublishPlugin<Extension> {
         Task task = variant.assemble
         File file = variant.outputs[0].outputFile
         return new DefaultPublishArtifact(tasks: [task], extension: 'aar', file: file)
+    }
+
+    private static File findPomContentFile(Project project, def variant) {
+        List<File> files = [
+                project.file("src/$variant.name/$POM_CONTENT_FILENAME"),
+                project.file("src/main/$POM_CONTENT_FILENAME"),
+        ]
+        return files.find { it.exists() }
     }
 
     private Task createSourcesTask(Project project, def variant) {
@@ -113,7 +119,6 @@ class AndroidPublishPlugin extends NewBasePublishPlugin<Extension> {
             classifier = "${variant.name}-javadoc"
             from javadocTask.destinationDir
         }
-
     }
 
     @Override
@@ -127,12 +132,19 @@ class AndroidPublishPlugin extends NewBasePublishPlugin<Extension> {
         }
 
         def variant = findLibraryVariant(project, extension)
+
+        Action<? super XmlProvider> pomConfiguration = createPomConfiguration(
+                project, findPomContentFile(project, variant),
+                variant.variantData.variantDependency.compileConfiguration.allDependencies as DependencySet)
+
         return { MavenPublication publication ->
             publication.artifact prepareArtifact(variant)
 
             String variantName = variant.name
             publication.artifact(sourcesTask[variantName]) { classifier 'sources' }
             publication.artifact(javadocTask[variantName]) { classifier 'javadoc' }
+
+            publication.pom.withXml pomConfiguration
         }
     }
 

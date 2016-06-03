@@ -16,10 +16,10 @@
 
 package igel.gradle.publish
 
-import org.gradle.api.Action
-import org.gradle.api.GradleException
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+import groovy.xml.QName
+import org.gradle.api.*
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.maven.MavenPublication
 
@@ -29,6 +29,81 @@ abstract class NewBasePublishPlugin<E extends Extension> implements Plugin<Proje
 
         String publicationName
 
+    }
+
+    static final String POM_CONTENT_FILENAME = 'pom-content.xml'
+    private static final String POM_XMLNS_URI = 'http://maven.apache.org/POM/4.0.0'
+    private static final String POM_TAG_MODEL_VERSION = 'modelVersion'
+    private static final String POM_TAG_GROUP = 'groupId'
+    private static final String POM_TAG_ARTIFACT_ID = 'artifactId'
+    private static final String POM_TAG_VERSION = 'version'
+    private static final String POM_TAG_PACKAGING = 'packaging'
+    private static final String POM_TAG_DEPENDENCIES = 'dependencies'
+
+    /**
+     * Creates POM configuration action.
+     * @param project the target project.
+     * @param pomContentFile file with POM content.
+     * @param compileConfiguration configuration containing compile POM dependencies.
+     * @return
+     */
+    protected static Action<? super XmlProvider> createPomConfiguration(Project project, File pomContentFile,
+                                                                        DependencySet compileDependencies) {
+        return { XmlProvider provider ->
+            Node node = provider.asNode()
+
+            if (pomContentFile != null && pomContentFile.exists()) {
+                Node pomNode = new XmlParser().parseText(pomContentFile.text)
+                pomNode.children().each { Node child ->
+                    QName name = child.name() as QName
+                    if (name.namespaceURI != POM_XMLNS_URI) {
+                        node.append(child)
+                    } else {
+                        switch (name.localPart) {
+                            case POM_TAG_MODEL_VERSION:
+                                project.logger.warn("" +
+                                        "Please remove <$POM_TAG_MODEL_VERSION> from your $POM_CONTENT_FILENAME")
+                                break
+                            case POM_TAG_GROUP:
+                                project.logger.warn("" +
+                                        "Please remove <$POM_TAG_GROUP> from your $POM_CONTENT_FILENAME\n" +
+                                        "  (Value of project.group will be used)")
+                                break
+                            case POM_TAG_ARTIFACT_ID:
+                                project.logger.warn("" +
+                                        "Please remove <$POM_TAG_ARTIFACT_ID> from your $POM_CONTENT_FILENAME\n" +
+                                        "  (Value of project.name will be used)")
+                                break
+                            case POM_TAG_VERSION:
+                                project.logger.warn("" +
+                                        "Please remove <$POM_TAG_VERSION> from your $POM_CONTENT_FILENAME\n" +
+                                        "  (Value of project.version will be used)")
+                                break
+                            case POM_TAG_PACKAGING:
+                                project.logger.warn("" +
+                                        "Please remove <$POM_TAG_PACKAGING> from your $POM_CONTENT_FILENAME")
+                                break
+                            case POM_TAG_DEPENDENCIES:
+                                project.logger.warn("" +
+                                        "Please remove <$POM_TAG_DEPENDENCIES> from your $POM_CONTENT_FILENAME\n" +
+                                        "  (Gradle dependencies will be used)")
+                                break
+                            default:
+                                node.append(child)
+                        }
+                    }
+                }
+            }
+
+            Node dependenciesNode = node.appendNode(POM_TAG_DEPENDENCIES)
+            compileDependencies.each { Dependency dependency ->
+                Node dependencyNode = dependenciesNode.appendNode('dependency')
+                dependencyNode.appendNode('scope', 'compile')
+                dependencyNode.appendNode('groupId', dependency.group)
+                dependencyNode.appendNode('artifactId', dependency.name)
+                dependencyNode.appendNode('version', dependency.version)
+            }
+        } as Action
     }
 
     protected final String requiredPlugin
