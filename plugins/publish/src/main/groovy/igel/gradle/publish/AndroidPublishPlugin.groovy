@@ -36,7 +36,7 @@ class AndroidPublishPlugin extends NewBasePublishPlugin<Extension> {
                 'android')
     }
 
-    private def findLibraryVariant(Project project, Extension extension) {
+    private def findLibraryVariant(Project project) {
         def variant = project.android.libraryVariants.find { it.name == extension.variantName }
         if (variant == null) {
             throw new GradleException("" +
@@ -122,7 +122,7 @@ class AndroidPublishPlugin extends NewBasePublishPlugin<Extension> {
     }
 
     @Override
-    protected Action<MavenPublication> prepareMavenConfiguration(Project project, Extension extension) {
+    protected Action<MavenPublication> prepareMavenConfiguration(Project project) {
         Map<String, Task> sourcesTask = [:]
         Map<String, Task> javadocTask = [:]
         project.android.libraryVariants.all { variant ->
@@ -131,7 +131,7 @@ class AndroidPublishPlugin extends NewBasePublishPlugin<Extension> {
             javadocTask[variantName] = createJavadocTask(project, variant)
         }
 
-        def variant = findLibraryVariant(project, extension)
+        def variant = findLibraryVariant(project)
 
         Action<? super XmlProvider> pomConfiguration = createPomConfiguration(
                 project, findPomContentFile(project, variant),

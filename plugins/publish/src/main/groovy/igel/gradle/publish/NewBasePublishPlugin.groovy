@@ -128,6 +128,7 @@ abstract class NewBasePublishPlugin<E extends Extension> implements Plugin<Proje
     protected final Class<E> extensionClass
     protected final String extensionName
     protected final String defaultPublicationName
+    private E extension
 
     NewBasePublishPlugin(String requiredPlugin,
                          Class<E> extensionClass, String extensionName,
@@ -138,6 +139,10 @@ abstract class NewBasePublishPlugin<E extends Extension> implements Plugin<Proje
         this.defaultPublicationName = defaultPublicationName
     }
 
+    E getExtension() {
+        return extension
+    }
+
     /**
      * Returns configuration of MavenPublication.
      * <br/>
@@ -146,7 +151,7 @@ abstract class NewBasePublishPlugin<E extends Extension> implements Plugin<Proje
      * @param target the target project.
      * @return configuration closure.
      */
-    protected abstract Action<MavenPublication> prepareMavenConfiguration(Project project, E extension)
+    protected abstract Action<MavenPublication> prepareMavenConfiguration(Project project)
 
     @Override
     final void apply(Project target) {
@@ -159,7 +164,7 @@ abstract class NewBasePublishPlugin<E extends Extension> implements Plugin<Proje
         target.apply plugin: 'maven-publish'
 
         // create our extension to get user's preferences
-        E extension = target.extensions.create(extensionName, extensionClass)
+        extension = target.extensions.create(extensionName, extensionClass)
         extension.publicationName = defaultPublicationName
 
         // create publication AFTER evaluation
@@ -168,7 +173,7 @@ abstract class NewBasePublishPlugin<E extends Extension> implements Plugin<Proje
             checkGroupAndVersion(target)
 
             // prepare maven publication configuration
-            Action<MavenPublication> configuration = prepareMavenConfiguration(target, extension)
+            Action<MavenPublication> configuration = prepareMavenConfiguration(target)
 
             // create and configure maven publication
             PublicationContainer publications = target.publishing.publications
