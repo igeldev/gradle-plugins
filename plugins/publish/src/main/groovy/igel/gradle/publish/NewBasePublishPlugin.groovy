@@ -29,16 +29,18 @@ abstract class NewBasePublishPlugin<E extends Extension> implements Plugin<Proje
 
         String publicationName
 
+        File pom
+
     }
 
     static final String POM_CONTENT_FILENAME = 'pom-content.xml'
-    private static final String POM_XMLNS_URI = 'http://maven.apache.org/POM/4.0.0'
-    private static final String POM_TAG_MODEL_VERSION = 'modelVersion'
-    private static final String POM_TAG_GROUP = 'groupId'
-    private static final String POM_TAG_ARTIFACT_ID = 'artifactId'
-    private static final String POM_TAG_VERSION = 'version'
-    private static final String POM_TAG_PACKAGING = 'packaging'
-    private static final String POM_TAG_DEPENDENCIES = 'dependencies'
+    protected static final String POM_XMLNS_URI = 'http://maven.apache.org/POM/4.0.0'
+    protected static final String POM_TAG_MODEL_VERSION = 'modelVersion'
+    protected static final String POM_TAG_GROUP = 'groupId'
+    protected static final String POM_TAG_ARTIFACT_ID = 'artifactId'
+    protected static final String POM_TAG_VERSION = 'version'
+    protected static final String POM_TAG_PACKAGING = 'packaging'
+    protected static final String POM_TAG_DEPENDENCIES = 'dependencies'
 
     protected static void checkGroupAndVersion(Project project) {
         if (!project.group) {
@@ -58,6 +60,25 @@ abstract class NewBasePublishPlugin<E extends Extension> implements Plugin<Proje
         }
     }
 
+    protected final String requiredPlugin
+    protected final Class<E> extensionClass
+    protected final String extensionName
+    protected final String defaultPublicationName
+    private E extension
+
+    NewBasePublishPlugin(String requiredPlugin,
+                         Class<E> extensionClass, String extensionName,
+                         String defaultPublicationName) {
+        this.requiredPlugin = requiredPlugin
+        this.extensionClass = extensionClass
+        this.extensionName = extensionName
+        this.defaultPublicationName = defaultPublicationName
+    }
+
+    E getExtension() {
+        return extension
+    }
+
     /**
      * Creates POM configuration action.
      * @param project the target project.
@@ -65,8 +86,10 @@ abstract class NewBasePublishPlugin<E extends Extension> implements Plugin<Proje
      * @param compileConfiguration configuration containing compile POM dependencies.
      * @return
      */
-    protected static Action<? super XmlProvider> createPomConfiguration(Project project, File pomContentFile,
-                                                                        DependencySet compileDependencies) {
+    protected Action<? super XmlProvider> createPomConfiguration(Project project, File pomContentFile,
+                                                                 DependencySet compileDependencies) {
+        pomContentFile = pomContentFile ?: extension.pom
+
         return { XmlProvider provider ->
             Node node = provider.asNode()
 
@@ -122,25 +145,6 @@ abstract class NewBasePublishPlugin<E extends Extension> implements Plugin<Proje
                 dependencyNode.appendNode('version', dependency.version)
             }
         } as Action
-    }
-
-    protected final String requiredPlugin
-    protected final Class<E> extensionClass
-    protected final String extensionName
-    protected final String defaultPublicationName
-    private E extension
-
-    NewBasePublishPlugin(String requiredPlugin,
-                         Class<E> extensionClass, String extensionName,
-                         String defaultPublicationName) {
-        this.requiredPlugin = requiredPlugin
-        this.extensionClass = extensionClass
-        this.extensionName = extensionName
-        this.defaultPublicationName = defaultPublicationName
-    }
-
-    E getExtension() {
-        return extension
     }
 
     /**
