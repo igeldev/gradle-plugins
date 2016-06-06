@@ -31,6 +31,10 @@ abstract class NewBasePublishPlugin<E extends Extension> implements Plugin<Proje
 
         File pom
 
+        boolean publishSrc = true
+
+        boolean publishDoc = true
+
     }
 
     static final String POM_CONTENT_FILENAME = 'pom-content.xml'

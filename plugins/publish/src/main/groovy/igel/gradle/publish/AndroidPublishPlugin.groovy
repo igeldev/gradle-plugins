@@ -141,8 +141,12 @@ class AndroidPublishPlugin extends NewBasePublishPlugin<Extension> {
             publication.artifact prepareArtifact(variant)
 
             String variantName = variant.name
-            publication.artifact(sourcesTask[variantName]) { classifier 'sources' }
-            publication.artifact(javadocTask[variantName]) { classifier 'javadoc' }
+            if (extension.publishSrc) {
+                publication.artifact(sourcesTask[variantName]) { classifier 'sources' }
+            }
+            if (extension.publishDoc) {
+                publication.artifact(javadocTask[variantName]) { classifier 'javadoc' }
+            }
 
             publication.pom.withXml pomConfiguration
         }
