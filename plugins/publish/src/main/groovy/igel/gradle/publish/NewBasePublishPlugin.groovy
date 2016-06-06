@@ -40,6 +40,24 @@ abstract class NewBasePublishPlugin<E extends Extension> implements Plugin<Proje
     private static final String POM_TAG_PACKAGING = 'packaging'
     private static final String POM_TAG_DEPENDENCIES = 'dependencies'
 
+    protected static void checkGroupAndVersion(Project project) {
+        if (!project.group) {
+            throw new GradleException("" +
+                    "Project group isn't set.\n" +
+                    "Please specify it in build.gradle:\n" +
+                    "\n" +
+                    "group = 'com.your.group.name'")
+        }
+
+        if (!project.version || project.version == Project.DEFAULT_VERSION) {
+            throw new GradleException("" +
+                    "Project version isn't set.\n" +
+                    "Please specify it in build.gradle:\n" +
+                    "\n" +
+                    "version = '1.0.0'")
+        }
+    }
+
     /**
      * Creates POM configuration action.
      * @param project the target project.
@@ -146,6 +164,9 @@ abstract class NewBasePublishPlugin<E extends Extension> implements Plugin<Proje
 
         // create publication AFTER evaluation
         target.afterEvaluate {
+            // check that group and version are set
+            checkGroupAndVersion(target)
+
             // prepare maven publication configuration
             Action<MavenPublication> configuration = prepareMavenConfiguration(target, extension)
 
