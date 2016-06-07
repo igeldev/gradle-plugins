@@ -17,46 +17,73 @@
 package igel.gradle.publish
 
 import org.gradle.api.Action
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.XmlProvider
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
+import org.gradle.jvm.tasks.Jar
 
-class JavaPublishPlugin extends BasePublishPlugin {
+class JavaPublishPlugin extends NewBasePublishPlugin<NewBasePublishPlugin.Extension> {
 
-    @Override
-    protected Action<MavenPublication> getMavenConfiguration(Project target) {
-        // check that 'java' plugin is applied
-        // because we need 'java' component, 'main' source set and javadoc task
-        if (!target.plugins.hasPlugin('java')) {
-            throw new GradleException('plugin \'java\' should be applied first')
-        }
+    JavaPublishPlugin() {
+        super('java',
+                Extension, 'publishJava',
+                'java')
+    }
 
-        // create a task to prepare source code jar
-        Task sourcesJarTask = target.task('sourcesJar', type: Jar) {
+    private static DefaultPublishArtifact prepareArtifact(Project project) {
+        Jar jarTask = project.tasks['jar'] as Jar
+        File jarFile = jarTask.archivePath
+        return new DefaultPublishArtifact(tasks: [jarTask], extension: 'jar', file: jarFile)
+    }
+
+    private static File findPomContentFile(Project project) {
+        List<File> files = [
+                project.file("src/main/$POM_CONTENT_FILENAME"),
+        ]
+        return files.find { it.exists() }
+    }
+
+    private Task createSourcesTask(Project project) {
+        return project.task("sourcesJar", type: Jar) {
             group = 'documentation'
             description = 'Assembles a jar archive containing the main source code.'
             classifier = 'sources'
-            from target.sourceSets.main.allSource
+            from project.sourceSets.main.allSource
         }
+    }
 
-        // create a task to prepare javadoc jar
-        Javadoc javadocTask = target.tasks['javadoc'] as Javadoc
-        Task javadocJarTask = target.task('javadocJar', type: Jar,
-                dependsOn: javadocTask) {
+    private Task createJavadocTask(Project project) {
+        Javadoc javadocTask = project.tasks['javadoc'] as Javadoc
+        return project.task('javadocJar', type: Jar, dependsOn: javadocTask) {
             group = 'documentation'
             description = 'Assembles a jar archive containing the Javadoc API documentation.'
             classifier = 'javadoc'
             from javadocTask.destinationDir
         }
+    }
 
-        // return maven configuration
+    @Override
+    protected Action<MavenPublication> prepareMavenConfiguration(Project project) {
+        Task sourcesTask = createSourcesTask(project)
+        Task javadocTask = createJavadocTask(project)
+
+        Action<? super XmlProvider> pomConfiguration = createPomConfiguration(
+                project, findPomContentFile(project),
+                project.configurations.compile.allDependencies)
+
         return { MavenPublication publication ->
-            publication.from target.components.java
-            publication.artifact sourcesJarTask
-            publication.artifact javadocJarTask
+            publication.artifact prepareArtifact(project)
+
+            if (extension.publishSrc) {
+                publication.artifact sourcesTask
+            }
+            if (extension.publishDoc) {
+                publication.artifact javadocTask
+            }
+
+            publication.pom.withXml pomConfiguration
         }
     }
 
