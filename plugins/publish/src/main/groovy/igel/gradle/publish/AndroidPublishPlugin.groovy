@@ -22,9 +22,9 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
 
-class AndroidPublishPlugin extends NewBasePublishPlugin<Extension> {
+class AndroidPublishPlugin extends BasePublishPlugin<Extension> {
 
-    static class Extension extends NewBasePublishPlugin.Extension {
+    static class Extension extends BasePublishPlugin.Extension {
 
         String variantName = 'release'
 

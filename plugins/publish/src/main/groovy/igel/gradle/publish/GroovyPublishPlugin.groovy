@@ -24,7 +24,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.tasks.Jar
 
-class GroovyPublishPlugin extends NewBasePublishPlugin<NewBasePublishPlugin.Extension> {
+class GroovyPublishPlugin extends BasePublishPlugin<BasePublishPlugin.Extension> {
 
     GroovyPublishPlugin() {
         super('groovy',

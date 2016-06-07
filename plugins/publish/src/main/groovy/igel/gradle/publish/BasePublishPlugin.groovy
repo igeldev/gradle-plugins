@@ -23,7 +23,7 @@ import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.maven.MavenPublication
 
-abstract class NewBasePublishPlugin<E extends Extension> implements Plugin<Project> {
+abstract class BasePublishPlugin<E extends Extension> implements Plugin<Project> {
 
     static class Extension {
 
@@ -70,9 +70,9 @@ abstract class NewBasePublishPlugin<E extends Extension> implements Plugin<Proje
     protected final String defaultPublicationName
     private E extension
 
-    NewBasePublishPlugin(String requiredPlugin,
-                         Class<E> extensionClass, String extensionName,
-                         String defaultPublicationName) {
+    BasePublishPlugin(String requiredPlugin,
+                      Class<E> extensionClass, String extensionName,
+                      String defaultPublicationName) {
         this.requiredPlugin = requiredPlugin
         this.extensionClass = extensionClass
         this.extensionName = extensionName

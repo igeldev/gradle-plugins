@@ -24,7 +24,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
 
-class JavaPublishPlugin extends NewBasePublishPlugin<NewBasePublishPlugin.Extension> {
+class JavaPublishPlugin extends BasePublishPlugin<BasePublishPlugin.Extension> {
 
     JavaPublishPlugin() {
         super('java',
