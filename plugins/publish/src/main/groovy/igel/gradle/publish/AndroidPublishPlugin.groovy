@@ -17,7 +17,7 @@
 package igel.gradle.publish
 
 import org.gradle.api.*
-import org.gradle.api.artifacts.DependencySet
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
@@ -133,9 +133,10 @@ class AndroidPublishPlugin extends BasePublishPlugin<Extension> {
 
         def variant = findLibraryVariant(project)
 
+        Configuration configuration = variant.variantData.variantDependency.compileConfiguration
         Action<? super XmlProvider> pomConfiguration = createPomConfiguration(
                 project, findPomContentFile(project, variant),
-                variant.variantData.variantDependency.compileConfiguration.allDependencies as DependencySet)
+                configuration.resolvedConfiguration.firstLevelModuleDependencies)
 
         return { MavenPublication publication ->
             publication.artifact prepareArtifact(variant)

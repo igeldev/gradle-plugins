@@ -20,6 +20,7 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.XmlProvider
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.javadoc.Groovydoc
 import org.gradle.jvm.tasks.Jar
@@ -69,9 +70,10 @@ class GroovyPublishPlugin extends BasePublishPlugin<BasePublishPlugin.Extension>
         Task sourcesTask = createSourcesTask(project)
         Task groovydocTask = createGroovydocTask(project)
 
+        Configuration configuration = project.configurations.compile
         Action<? super XmlProvider> pomConfiguration = createPomConfiguration(
                 project, findPomContentFile(project),
-                project.configurations.compile.allDependencies)
+                configuration.resolvedConfiguration.firstLevelModuleDependencies)
 
         return { MavenPublication publication ->
             publication.artifact prepareArtifact(project)
