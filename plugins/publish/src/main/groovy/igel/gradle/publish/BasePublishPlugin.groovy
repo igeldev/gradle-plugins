@@ -162,11 +162,6 @@ abstract class BasePublishPlugin<E extends Extension> implements Plugin<Project>
 
     @Override
     final void apply(Project target) {
-        // check that required plugin is applied
-        if (!target.plugins.hasPlugin(requiredPlugin)) {
-            throw new GradleException("plugin '$requiredPlugin' should be applied first")
-        }
-
         // apply 'maven-publish' plugin
         target.apply plugin: 'maven-publish'
 
@@ -176,6 +171,11 @@ abstract class BasePublishPlugin<E extends Extension> implements Plugin<Project>
 
         // create publication AFTER evaluation
         target.afterEvaluate {
+            // check that required plugin is applied
+            if (!target.plugins.hasPlugin(requiredPlugin)) {
+                throw new GradleException("plugin '$requiredPlugin' should be applied")
+            }
+
             // check that group and version are set
             checkGroupAndVersion(target)
 
