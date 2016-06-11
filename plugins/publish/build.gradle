@@ -3,6 +3,7 @@ apply plugin: 'java-gradle-plugin'
 
 dependencies {
     compile gradleApi()
+    compile 'com.android.tools.build:gradle:2.1.0'
 }
 
 description = 'Gradle plug-ins to publish artifacts to Maven local and JCenter repositories.'

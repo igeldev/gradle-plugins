@@ -1,0 +1,23 @@
+plugins {
+    id 'igel.publish.groovy'
+}
+
+apply plugin: 'groovy'
+
+group = 'igel.example'
+version = '1.2.3'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+}
+
+publishing {
+    repositories {
+        maven {
+            url getProperty('repo')
+        }
+    }
+}
