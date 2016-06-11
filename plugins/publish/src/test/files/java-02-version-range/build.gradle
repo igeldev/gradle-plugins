@@ -1,0 +1,24 @@
+plugins {
+    id 'igel.publish.java'
+}
+
+apply plugin: 'java'
+
+group = 'igel.example'
+version = '1.2.3'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile group: 'com.google.code.gson', name: 'gson', version: '(,2.6.2]'
+}
+
+publishing {
+    repositories {
+        maven {
+            url getProperty('repo')
+        }
+    }
+}

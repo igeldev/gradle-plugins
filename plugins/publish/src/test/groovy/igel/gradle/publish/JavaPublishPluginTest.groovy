@@ -14,4 +14,9 @@ class JavaPublishPluginTest extends BasePublishPluginTest {
         runPublishTest 'src/test/files/java-01-simple'
     }
 
+    @Test
+    void testJava02VersionRange() {
+        runPublishTest 'src/test/files/java-02-version-range'
+    }
+
 }
