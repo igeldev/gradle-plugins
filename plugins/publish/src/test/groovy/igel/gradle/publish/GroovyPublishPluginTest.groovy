@@ -14,4 +14,9 @@ class GroovyPublishPluginTest extends BasePublishPluginTest {
         runPublishTest 'src/test/files/groovy-01-simple'
     }
 
+    @Test
+    void testGroovy02GradlePlugin() {
+        runPublishTest 'src/test/files/groovy-02-gradle-plugin'
+    }
+
 }

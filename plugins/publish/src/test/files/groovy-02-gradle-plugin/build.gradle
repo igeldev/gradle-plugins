@@ -1,0 +1,26 @@
+plugins {
+    id 'igel.publish.groovy'
+}
+
+apply plugin: 'groovy'
+apply plugin: 'java-gradle-plugin'
+
+group = 'igel.example'
+version = '1.2.3'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile gradleApi()
+    compile 'com.google.code.gson:gson:2.6.2'
+}
+
+publishing {
+    repositories {
+        maven {
+            url getProperty('repo')
+        }
+    }
+}
