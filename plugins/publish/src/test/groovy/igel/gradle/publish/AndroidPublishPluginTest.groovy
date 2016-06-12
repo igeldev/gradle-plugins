@@ -14,4 +14,14 @@ class AndroidPublishPluginTest extends BasePublishPluginTest {
         runPublishTest 'src/test/files/android-01-simple'
     }
 
+    @Test
+    void testAndroid02Aidl() {
+        runPublishTest 'src/test/files/android-02-aidl'
+    }
+
+    @Test
+    void testAndroid03Resources() {
+        runPublishTest 'src/test/files/android-03-resources'
+    }
+
 }
