@@ -1,0 +1,55 @@
+{
+  "name": "Android - Library variant",
+  "description": "Project has several variants and one of them configured to be published.",
+  "task": "publishAndroidPublicationToMavenRepository",
+  "repo": [
+    {
+      "path": "igel/example/android-04-library-variant/maven-metadata.xml",
+      "type": "raw"
+    },
+    {
+      "path": "igel/example/android-04-library-variant/1.2.3/android-04-library-variant-1.2.3.pom",
+      "type": "xml",
+      "text": [
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+        "",
+        "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"",
+        "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\"",
+        "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">",
+        "    <modelVersion>4.0.0</modelVersion>",
+        "",
+        "    <groupId>igel.example</groupId>",
+        "    <artifactId>android-04-library-variant</artifactId>",
+        "    <version>1.2.3</version>",
+        "    <packaging>aar</packaging>",
+        "",
+        "    <dependencies/>",
+        "",
+        "</project>"
+      ]
+    },
+    {
+      "path": "igel/example/android-04-library-variant/1.2.3/android-04-library-variant-1.2.3.aar",
+      "type": "zip",
+      "files": [
+        "aapt/AndroidManifest.xml",
+        "AndroidManifest.xml",
+        "classes.jar"
+      ]
+    },
+    {
+      "path": "igel/example/android-04-library-variant/1.2.3/android-04-library-variant-1.2.3-sources.jar",
+      "type": "zip",
+      "files": [
+        "META-INF/MANIFEST.MF"
+      ]
+    },
+    {
+      "path": "igel/example/android-04-library-variant/1.2.3/android-04-library-variant-1.2.3-javadoc.jar",
+      "type": "zip",
+      "files": [
+        "META-INF/MANIFEST.MF"
+      ]
+    }
+  ]
+}

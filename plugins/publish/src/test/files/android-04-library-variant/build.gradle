@@ -1,0 +1,51 @@
+plugins {
+    id 'com.android.library'
+    id 'igel.publish.android'
+}
+
+group = 'igel.example'
+version = '1.2.3'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion '23.0.3'
+
+    defaultConfig {
+        versionCode 1
+        versionName "$version"
+        minSdkVersion 14
+        targetSdkVersion 23
+    }
+
+    flavorDimensions 'x', 'y'
+
+    productFlavors {
+        x1 { dimension 'x' }
+        x2 { dimension 'x' }
+        y1 { dimension 'y' }
+        y2 { dimension 'y' }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+publishAndroid {
+    variantName = 'x1Y1Debug'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+}
+
+publishing {
+    repositories {
+        maven {
+            url getProperty('repo')
+        }
+    }
+}

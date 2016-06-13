@@ -24,4 +24,9 @@ class AndroidPublishPluginTest extends BasePublishPluginTest {
         runPublishTest 'src/test/files/android-03-resources'
     }
 
+    @Test
+    void testAndroid04LibraryVariant() {
+        runPublishTest 'src/test/files/android-04-library-variant'
+    }
+
 }
