@@ -19,4 +19,9 @@ class GroovyPublishPluginTest extends BasePublishPluginTest {
         runPublishTest 'src/test/files/groovy-02-gradle-plugin'
     }
 
+    @Test
+    void testGroovy03VersionRange() {
+        runPublishTest 'src/test/files/groovy-03-version-range'
+    }
+
 }
