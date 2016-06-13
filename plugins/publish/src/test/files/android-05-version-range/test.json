@@ -1,0 +1,62 @@
+{
+  "name": "Android - Version range",
+  "description": "Project contains dependency with version range.",
+  "task": "publishAndroidPublicationToMavenRepository",
+  "repo": [
+    {
+      "path": "igel/example/android-05-version-range/maven-metadata.xml",
+      "type": "raw"
+    },
+    {
+      "path": "igel/example/android-05-version-range/1.2.3/android-05-version-range-1.2.3.pom",
+      "type": "xml",
+      "text": [
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+        "",
+        "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"",
+        "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\"",
+        "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">",
+        "    <modelVersion>4.0.0</modelVersion>",
+        "",
+        "    <groupId>igel.example</groupId>",
+        "    <artifactId>android-05-version-range</artifactId>",
+        "    <version>1.2.3</version>",
+        "    <packaging>aar</packaging>",
+        "",
+        "    <dependencies>",
+        "        <dependency>",
+        "            <scope>compile</scope>",
+        "            <groupId>com.google.code.gson</groupId>",
+        "            <artifactId>gson</artifactId>",
+        "            <version>(,2.6.2]</version>",
+        "        </dependency>",
+        "    </dependencies>",
+        "",
+        "</project>"
+      ]
+    },
+    {
+      "path": "igel/example/android-05-version-range/1.2.3/android-05-version-range-1.2.3.aar",
+      "type": "zip",
+      "files": [
+        "aapt/AndroidManifest.xml",
+        "AndroidManifest.xml",
+        "classes.jar"
+      ]
+    },
+    {
+      "path": "igel/example/android-05-version-range/1.2.3/android-05-version-range-1.2.3-sources.jar",
+      "type": "zip",
+      "files": [
+        "META-INF/MANIFEST.MF"
+      ]
+    },
+    {
+      "path": "igel/example/android-05-version-range/1.2.3/android-05-version-range-1.2.3-javadoc.jar",
+      "type": "zip",
+      "files": [
+        "META-INF/MANIFEST.MF"
+      ]
+    }
+  ]
+}

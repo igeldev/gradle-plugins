@@ -29,4 +29,9 @@ class AndroidPublishPluginTest extends BasePublishPluginTest {
         runPublishTest 'src/test/files/android-04-library-variant'
     }
 
+    @Test
+    void testAndroid05VersionRange() {
+        runPublishTest 'src/test/files/android-05-version-range'
+    }
+
 }
