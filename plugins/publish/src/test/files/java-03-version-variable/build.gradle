@@ -1,0 +1,28 @@
+plugins {
+    id 'igel.publish.java'
+}
+
+apply plugin: 'java'
+
+group = 'igel.example'
+version = '1.2.3'
+
+repositories {
+    jcenter()
+}
+
+def versionGson = '2.6.2'
+def versionRxJava = '1.1.5'
+
+dependencies {
+    compile group: 'com.google.code.gson', name: 'gson', version: "(,$versionGson]"
+    compile "io.reactivex:rxjava:$versionRxJava"
+}
+
+publishing {
+    repositories {
+        maven {
+            url getProperty('repo')
+        }
+    }
+}
