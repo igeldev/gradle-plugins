@@ -140,10 +140,18 @@ abstract class BasePublishPlugin<E extends Extension> implements Plugin<Project>
                 }
             }
 
+            // sort dependencies for proper testing
+            List<Dependency> dependencies = []
+            dependencies.addAll(configuration.allDependencies)
+            dependencies.sort { Dependency dep1, dep2 ->
+                String str1 = "$dep1.group:$dep1.name:$dep1.version"
+                String str2 = "$dep2.group:$dep2.name:$dep2.version"
+                return str1.compareTo(str2)
+            }
+
+            // write dependencies to POM file
             Node dependenciesNode = node.appendNode(POM_TAG_DEPENDENCIES)
-            configuration
-                    .allDependencies
-                    .each { Dependency dependency ->
+            dependencies.each { Dependency dependency ->
                 Node dependencyNode = dependenciesNode.appendNode('dependency')
                 dependencyNode.appendNode('scope', 'compile')
                 dependencyNode.appendNode('groupId', dependency.group)
