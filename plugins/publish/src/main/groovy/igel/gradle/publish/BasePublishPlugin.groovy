@@ -18,6 +18,7 @@ package igel.gradle.publish
 
 import groovy.xml.QName
 import org.gradle.api.*
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.maven.MavenPublication
@@ -90,7 +91,7 @@ abstract class BasePublishPlugin<E extends Extension> implements Plugin<Project>
      * @return
      */
     protected Action<? super XmlProvider> createPomConfiguration(Project project, File pomContentFile,
-                                                                 Set<ResolvedDependency> compileDependencies) {
+                                                                 Configuration configuration) {
         pomContentFile = pomContentFile ?: extension.pom
 
         return { XmlProvider provider ->
@@ -140,7 +141,10 @@ abstract class BasePublishPlugin<E extends Extension> implements Plugin<Project>
             }
 
             Node dependenciesNode = node.appendNode(POM_TAG_DEPENDENCIES)
-            compileDependencies.each { ResolvedDependency dependency ->
+            configuration
+                    .resolvedConfiguration
+                    .firstLevelModuleDependencies
+                    .each { ResolvedDependency dependency ->
                 Node dependencyNode = dependenciesNode.appendNode('dependency')
                 dependencyNode.appendNode('scope', 'compile')
                 dependencyNode.appendNode('groupId', dependency.moduleGroup)

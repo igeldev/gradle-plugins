@@ -73,7 +73,7 @@ class GroovyPublishPlugin extends BasePublishPlugin<BasePublishPlugin.Extension>
         Configuration configuration = project.configurations.compile
         Action<? super XmlProvider> pomConfiguration = createPomConfiguration(
                 project, findPomContentFile(project),
-                configuration.resolvedConfiguration.firstLevelModuleDependencies)
+                configuration)
 
         return { MavenPublication publication ->
             publication.artifact prepareArtifact(project)
