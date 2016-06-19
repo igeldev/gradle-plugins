@@ -24,4 +24,9 @@ class JavaPublishPluginTest extends BasePublishPluginTest {
         runPublishTest 'src/test/files/java-03-version-variable'
     }
 
+    @Test
+    void testJava04Provided() {
+        runPublishTest 'src/test/files/java-04-provided'
+    }
+
 }
