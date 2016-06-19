@@ -133,10 +133,11 @@ class AndroidPublishPlugin extends BasePublishPlugin<Extension> {
 
         def variant = findLibraryVariant(project)
 
-        Configuration configuration = variant.variantData.variantDependency.compileConfiguration
+        Configuration classpathConfiguration = variant.variantData.variantDependency.compileConfiguration
+        Configuration compileConfiguration = variant.variantData.variantDependency.packageConfiguration
         Action<? super XmlProvider> pomConfiguration = createPomConfiguration(
                 project, findPomContentFile(project, variant),
-                configuration)
+                classpathConfiguration, compileConfiguration)
 
         return { MavenPublication publication ->
             publication.artifact prepareArtifact(variant)

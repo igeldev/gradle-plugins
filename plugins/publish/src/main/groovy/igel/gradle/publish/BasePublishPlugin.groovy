@@ -87,11 +87,13 @@ abstract class BasePublishPlugin<E extends Extension> implements Plugin<Project>
      * Creates POM configuration action.
      * @param project the target project.
      * @param pomContentFile file with POM content.
+     * @param classpathConfiguration configuration containing compile and provided POM dependencies.
      * @param compileConfiguration configuration containing compile POM dependencies.
      * @return
      */
     protected Action<? super XmlProvider> createPomConfiguration(Project project, File pomContentFile,
-                                                                 Configuration configuration) {
+                                                                 Configuration classpathConfiguration,
+                                                                 Configuration compileConfiguration) {
         pomContentFile = pomContentFile ?: extension.pom
 
         return { XmlProvider provider ->
@@ -142,7 +144,7 @@ abstract class BasePublishPlugin<E extends Extension> implements Plugin<Project>
 
             // sort dependencies for proper testing
             List<Dependency> dependencies = []
-            dependencies.addAll(configuration.allDependencies)
+            dependencies.addAll(classpathConfiguration.allDependencies)
             dependencies.sort { Dependency dep1, dep2 ->
                 String str1 = "$dep1.group:$dep1.name:$dep1.version"
                 String str2 = "$dep2.group:$dep2.name:$dep2.version"
@@ -152,8 +154,12 @@ abstract class BasePublishPlugin<E extends Extension> implements Plugin<Project>
             // write dependencies to POM file
             Node dependenciesNode = node.appendNode(POM_TAG_DEPENDENCIES)
             dependencies.each { Dependency dependency ->
+                boolean compileDependency = compileConfiguration.allDependencies.find {
+                    dependency.group == it.group && dependency.name == it.name
+                }
+
                 Node dependencyNode = dependenciesNode.appendNode('dependency')
-                dependencyNode.appendNode('scope', 'compile')
+                dependencyNode.appendNode('scope', compileDependency ? 'compile' : 'provided')
                 dependencyNode.appendNode('groupId', dependency.group)
                 dependencyNode.appendNode('artifactId', dependency.name)
                 dependencyNode.appendNode('version', dependency.version)

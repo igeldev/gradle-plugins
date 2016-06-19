@@ -70,10 +70,11 @@ class GroovyPublishPlugin extends BasePublishPlugin<BasePublishPlugin.Extension>
         Task sourcesTask = createSourcesTask(project)
         Task groovydocTask = createGroovydocTask(project)
 
-        Configuration configuration = project.configurations.compile
+        Configuration classpathConfiguration = project.configurations.compileOnly
+        Configuration compileConfiguration = project.configurations.compile
         Action<? super XmlProvider> pomConfiguration = createPomConfiguration(
                 project, findPomContentFile(project),
-                configuration)
+                classpathConfiguration, compileConfiguration)
 
         return { MavenPublication publication ->
             publication.artifact prepareArtifact(project)
