@@ -24,4 +24,9 @@ class GroovyPublishPluginTest extends BasePublishPluginTest {
         runPublishTest 'src/test/files/groovy-03-version-range'
     }
 
+    @Test
+    void testGroovy04Provided() {
+        runPublishTest 'src/test/files/groovy-04-provided'
+    }
+
 }

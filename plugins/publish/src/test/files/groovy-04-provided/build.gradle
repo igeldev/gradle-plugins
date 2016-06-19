@@ -1,0 +1,26 @@
+plugins {
+    id 'igel.publish.groovy'
+}
+
+apply plugin: 'groovy'
+
+group = 'igel.example'
+version = '1.2.3'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compileOnly 'org.codehaus.groovy:groovy-all:2.4.6'
+    compileOnly 'com.google.code.gson:gson:2.6.2'
+    compile 'io.reactivex:rxgroovy:1.0.3'
+}
+
+publishing {
+    repositories {
+        maven {
+            url getProperty('repo')
+        }
+    }
+}

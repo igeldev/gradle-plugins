@@ -1,0 +1,87 @@
+{
+  "name": "Groovy - Provided",
+  "description": "Project contains compile and provided dependencies.",
+  "task": "publishGroovyPublicationToMavenRepository",
+  "repo": [
+    {
+      "path": "igel/example/groovy-04-provided/maven-metadata.xml",
+      "type": "raw"
+    },
+    {
+      "path": "igel/example/groovy-04-provided/1.2.3/groovy-04-provided-1.2.3.pom",
+      "type": "xml",
+      "text": [
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+        "",
+        "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"",
+        "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\"",
+        "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">",
+        "    <modelVersion>4.0.0</modelVersion>",
+        "",
+        "    <groupId>igel.example</groupId>",
+        "    <artifactId>groovy-04-provided</artifactId>",
+        "    <version>1.2.3</version>",
+        "",
+        "    <dependencies>",
+        "        <dependency>",
+        "            <scope>provided</scope>",
+        "            <groupId>com.google.code.gson</groupId>",
+        "            <artifactId>gson</artifactId>",
+        "            <version>2.6.2</version>",
+        "        </dependency>",
+        "        <dependency>",
+        "            <scope>compile</scope>",
+        "            <groupId>io.reactivex</groupId>",
+        "            <artifactId>rxgroovy</artifactId>",
+        "            <version>1.0.3</version>",
+        "        </dependency>",
+        "        <dependency>",
+        "            <scope>provided</scope>",
+        "            <groupId>org.codehaus.groovy</groupId>",
+        "            <artifactId>groovy-all</artifactId>",
+        "            <version>2.4.6</version>",
+        "        </dependency>",
+        "    </dependencies>",
+        "",
+        "</project>"
+      ]
+    },
+    {
+      "path": "igel/example/groovy-04-provided/1.2.3/groovy-04-provided-1.2.3.jar",
+      "type": "zip",
+      "files": [
+        "META-INF/MANIFEST.MF",
+        "igel/example/groovy_lib/LibraryClass.class"
+      ]
+    },
+    {
+      "path": "igel/example/groovy-04-provided/1.2.3/groovy-04-provided-1.2.3-sources.jar",
+      "type": "zip",
+      "files": [
+        "META-INF/MANIFEST.MF",
+        "igel/example/groovy_lib/LibraryClass.groovy"
+      ]
+    },
+    {
+      "path": "igel/example/groovy-04-provided/1.2.3/groovy-04-provided-1.2.3-groovydoc.jar",
+      "type": "zip",
+      "files": [
+        "META-INF/MANIFEST.MF",
+        "igel/example/groovy_lib/LibraryClass.html",
+        "igel/example/groovy_lib/package-frame.html",
+        "igel/example/groovy_lib/package-summary.html",
+        "allclasses-frame.html",
+        "deprecated-list.html",
+        "groovy.ico",
+        "help-doc.html",
+        "index-all.html",
+        "index.html",
+        "inherit.gif",
+        "overview-frame.html",
+        "overview-summary.html",
+        "package-list",
+        "stylesheet.css"
+      ]
+    }
+  ]
+}
