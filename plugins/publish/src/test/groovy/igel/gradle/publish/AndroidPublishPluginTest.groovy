@@ -34,4 +34,9 @@ class AndroidPublishPluginTest extends BasePublishPluginTest {
         runPublishTest 'src/test/files/android-05-version-range'
     }
 
+    @Test
+    void testAndroid06Provided() {
+        runPublishTest 'src/test/files/android-06-provided'
+    }
+
 }

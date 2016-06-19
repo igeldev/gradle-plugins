@@ -1,0 +1,40 @@
+plugins {
+    id 'com.android.library'
+    id 'igel.publish.android'
+}
+
+group = 'igel.example'
+version = '1.2.3'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion '23.0.3'
+
+    defaultConfig {
+        versionCode 1
+        versionName "$version"
+        minSdkVersion 14
+        targetSdkVersion 23
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'com.android.support:support-v4:23.4.0'
+    provided 'com.google.code.gson:gson:2.6.2'
+}
+
+publishing {
+    repositories {
+        maven {
+            url getProperty('repo')
+        }
+    }
+}
