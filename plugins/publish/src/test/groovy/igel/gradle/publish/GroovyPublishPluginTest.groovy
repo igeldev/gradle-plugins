@@ -29,4 +29,9 @@ class GroovyPublishPluginTest extends BasePublishPluginTest {
         runPublishTest 'src/test/files/groovy-04-provided'
     }
 
+    @Test
+    void testGroovy05LocalDeps() {
+        runPublishTest 'src/test/files/groovy-05-local-deps'
+    }
+
 }
