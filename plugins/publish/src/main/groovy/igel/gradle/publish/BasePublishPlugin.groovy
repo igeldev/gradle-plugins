@@ -151,6 +151,12 @@ abstract class BasePublishPlugin<E extends Extension> implements Plugin<Project>
                 return str1.compareTo(str2)
             }
 
+            // remove empty dependencies: localGroovy(), gradleApi(), jar files etc.
+            dependencies.removeAll {
+                !it.group && !it.version &&
+                        (it.name == Project.DEFAULT_VERSION)
+            }
+
             // write dependencies to POM file
             Node dependenciesNode = node.appendNode(POM_TAG_DEPENDENCIES)
             dependencies.each { Dependency dependency ->
