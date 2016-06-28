@@ -1,0 +1,25 @@
+apply plugin: 'groovy'
+
+dependencies {
+    compile gradleApi()
+}
+
+description = 'Utility classes for Gradle build scripts.'
+version = '1.0.0'
+
+if (!project.hasProperty('disable-self')) {
+    apply plugin: 'igel.publish.groovy'
+
+    apply plugin: 'com.jfrog.bintray'
+
+    bintray {
+        publications = ['maven']
+        user = project.hasProperty('bintray.user') ? project['bintray.user'] : 'anonymous'
+        key = project.hasProperty('bintray.key') ? project['bintray.key'] : '???'
+        pkg {
+            repo = 'gradle-plugins'
+            name = 'common'
+            version.name = project.version
+        }
+    }
+}
