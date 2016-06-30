@@ -103,6 +103,58 @@ class Input implements Iterable<Property> {
 
     }
 
+    private static class SectionBuilderImpl implements SectionBuilder {
+
+        private final String name
+        private final String description
+        private final List<Section> sections = []
+        private final List<Property> properties = []
+
+        SectionBuilderImpl(String name, String description) {
+            this.name = name
+            this.description = description
+        }
+
+        Section build() {
+            return new Section(name, description, sections, properties)
+        }
+
+        @Override
+        SectionBuilder section(String name, Action<SectionBuilder> action) {
+            return section(name, null, action)
+        }
+
+        @Override
+        SectionBuilder section(String name, String description, Action<SectionBuilder> action) {
+            SectionBuilder builder = new SectionBuilderImpl(name, description)
+            action.execute(builder)
+            sections << builder.build()
+            return this
+        }
+
+        @Override
+        SectionBuilder property(String key, String name, String description) {
+            return property(key, Type.SINGLE_LINE, null, name, description)
+        }
+
+        @Override
+        SectionBuilder property(String key, String defaultValue, String name, String description) {
+            return property(key, Type.SINGLE_LINE, defaultValue, name, description)
+        }
+
+        @Override
+        SectionBuilder property(String key, Type type, String name, String description) {
+            return property(key, type, null, name, description)
+        }
+
+        @Override
+        SectionBuilder property(String key, Type type, String defaultValue, String name, String description) {
+            properties << new Property(key, type, defaultValue, name, description)
+            return this
+        }
+
+    }
+
     private Map<String, Property> properties = Collections.emptyMap()
     private Section rootSection
 
@@ -120,7 +172,11 @@ class Input implements Iterable<Property> {
     }
 
     void rootSection(Action<SectionBuilder> action) {
-        // todo set rootSection and properties map
+        SectionBuilder builder = new SectionBuilderImpl(null, null)
+        action.execute(builder)
+        this.rootSection = builder.build()
+
+        // todo set properties map
     }
 
     void assertMissing() throws GradleException {
