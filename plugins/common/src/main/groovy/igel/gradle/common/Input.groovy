@@ -29,23 +29,61 @@ class Input implements Iterable<Property> {
 
     static class Property {
 
-        Section owner
-        String key
-        Type type
-        String defaultValue
-        String name
-        String description
+        private Section owner
+
+        Section getOwner() {
+            return owner
+        }
+
+        final String key
+        final Type type
+        final String defaultValue
+        final String name
+        final String description
         String value
+
+        Property(String key, Type type, String defaultValue, String name, String description) {
+            this.key = key
+            this.type = type
+            this.name = name
+            this.description = description
+            this.defaultValue = defaultValue
+        }
+
+        @Override
+        String toString() {
+            "Property{key='$key', type=$type, name='$name'}"
+        }
 
     }
 
     static class Section {
 
-        Section owner
-        String name
-        String description
-        List<Section> sections
-        List<Property> properties
+        private Section owner
+
+        Section getOwner() {
+            return owner
+        }
+
+        final String name
+        final String description
+        final List<Section> sections
+        final List<Property> properties
+
+        Section(String name, String description, List<Section> sections, List<Property> properties) {
+            this.name = name
+            this.description = description
+            this.sections = Collections.unmodifiableList(new ArrayList<>(sections))
+            this.properties = Collections.unmodifiableList(new ArrayList<>(properties))
+
+            sections.each { it.owner = this }
+            properties.each { it.owner = this }
+        }
+
+        @Override
+        String toString() {
+            "Section{name='$name', sections=$sections, properties=$properties}"
+        }
 
     }
 
