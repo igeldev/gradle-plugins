@@ -89,26 +89,38 @@ class Input implements Iterable<Property> {
 
     static interface SectionBuilder {
 
+        SectionBuilder section(String name, Action<SectionBuilder> action)
+
         SectionBuilder section(String name, String description, Action<SectionBuilder> action)
+
+        SectionBuilder property(String key, String name, String description)
+
+        SectionBuilder property(String key, String defaultValue, String name, String description)
+
+        SectionBuilder property(String key, Type type, String name, String description)
 
         SectionBuilder property(String key, Type type, String defaultValue, String name, String description)
 
     }
 
+    private Map<String, Property> properties = Collections.emptyMap()
+    private Section rootSection
+
     @Override
     Iterator<Property> iterator() {
-        return null
+        return properties.values().iterator()
     }
 
     Property getAt(String key) {
-        return null
+        return properties.get(key)
     }
 
     Section getRootSection() {
-        return null
+        return rootSection
     }
 
     void rootSection(Action<SectionBuilder> action) {
+        // todo set rootSection and properties map
     }
 
     void assertMissing() throws GradleException {
