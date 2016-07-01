@@ -89,17 +89,23 @@ class Input implements Iterable<Property> {
 
     static interface SectionBuilder {
 
-        SectionBuilder section(String name, Action<SectionBuilder> action)
+        SectionBuilder section(String name,
+                               Action<SectionBuilder> action)
 
-        SectionBuilder section(String name, String description, Action<SectionBuilder> action)
+        SectionBuilder section(String name, String description,
+                               Action<SectionBuilder> action)
 
-        SectionBuilder property(String key, String name, String description)
+        SectionBuilder property(String key,
+                                String name, String description)
 
-        SectionBuilder property(String key, String defaultValue, String name, String description)
+        SectionBuilder property(String key, String defaultValue,
+                                String name, String description)
 
-        SectionBuilder property(String key, Type type, String name, String description)
+        SectionBuilder property(String key, Type type,
+                                String name, String description)
 
-        SectionBuilder property(String key, Type type, String defaultValue, String name, String description)
+        SectionBuilder property(String key, Type type, String defaultValue,
+                                String name, String description)
 
     }
 
@@ -120,12 +126,8 @@ class Input implements Iterable<Property> {
         }
 
         @Override
-        SectionBuilder section(String name, Action<SectionBuilder> action) {
-            return section(name, null, action)
-        }
-
-        @Override
-        SectionBuilder section(String name, String description, Action<SectionBuilder> action) {
+        SectionBuilder section(String name, String description = null,
+                               Action<SectionBuilder> action) {
             SectionBuilder builder = new SectionBuilderImpl(name, description)
             action.execute(builder)
             sections << builder.build()
@@ -133,22 +135,14 @@ class Input implements Iterable<Property> {
         }
 
         @Override
-        SectionBuilder property(String key, String name, String description) {
-            return property(key, Type.SINGLE_LINE, null, name, description)
-        }
-
-        @Override
-        SectionBuilder property(String key, String defaultValue, String name, String description) {
-            return property(key, Type.SINGLE_LINE, defaultValue, name, description)
-        }
-
-        @Override
-        SectionBuilder property(String key, Type type, String name, String description) {
+        SectionBuilder property(String key, Type type = Type.SINGLE_LINE,
+                                String name, String description) {
             return property(key, type, null, name, description)
         }
 
         @Override
-        SectionBuilder property(String key, Type type, String defaultValue, String name, String description) {
+        SectionBuilder property(String key, Type type = Type.SINGLE_LINE, String defaultValue,
+                                String name, String description) {
             properties << new Property(key, type, defaultValue, name, description)
             return this
         }
