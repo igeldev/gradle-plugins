@@ -170,7 +170,24 @@ class Input implements Iterable<Property> {
         action.execute(builder)
         this.rootSection = builder.build()
 
-        // todo set properties map
+        Map<String, Property> map = [:]
+        Closure propertiesClosure
+        propertiesClosure = { List<Section> sections ->
+            if (!sections.empty) {
+                sections.each {
+                    it.properties.each {
+                        if (map.containsKey(it.key)) {
+                            throw new IllegalArgumentException("Property '$it.key' is already registered")
+                        }
+                        map.put(it.key, it)
+                    }
+                }
+
+                propertiesClosure.trampoline(sections.collect { it.sections }.sum())
+            }
+        }.trampoline()
+        propertiesClosure.call([rootSection])
+        this.properties = Collections.unmodifiableMap(map)
     }
 
     void assertMissing() throws GradleException {
