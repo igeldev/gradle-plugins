@@ -18,6 +18,7 @@ package igel.gradle.common
 
 import org.gradle.api.Action
 import org.gradle.api.GradleException
+import org.gradle.api.Project
 
 class Input {
 
@@ -188,10 +189,28 @@ class Input {
     void assertMissing() throws GradleException {
     }
 
-    void load(Properties properties) {
+    void load(File propertiesFile) {
+        propertiesFile.withReader {
+            Properties properties = new Properties()
+            properties.load(it)
+            load(properties)
+        }
     }
 
-    void load(Map<String, String> properties) {
+    void load(Properties properties) {
+        Map<String, String> map = [:]
+        properties.stringPropertyNames().each { map[it] = properties.getProperty(it) }
+        load(map)
+    }
+
+    void load(Project project) {
+        load(project.properties)
+    }
+
+    void load(Map<String, ?> properties) {
+        properties.each { Map.Entry<String, ?> entry ->
+            this.@properties[entry.key]?.value = String.valueOf(entry.value)
+        }
     }
 
     boolean isVisible() {
