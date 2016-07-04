@@ -150,7 +150,7 @@ class Input {
     }
 
     private Map<String, Property> properties = Collections.emptyMap()
-    private Section rootSection
+    private Section rootSection = new Section(null, null, [], [])
 
     Map<String, Property> getProperties() {
         return properties
