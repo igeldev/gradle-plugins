@@ -19,7 +19,7 @@ package igel.gradle.common
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 
-class Input implements Iterable<Property> {
+class Input {
 
     static enum Type {
         SINGLE_LINE,
@@ -152,13 +152,8 @@ class Input implements Iterable<Property> {
     private Map<String, Property> properties = Collections.emptyMap()
     private Section rootSection
 
-    @Override
-    Iterator<Property> iterator() {
-        return properties.values().iterator()
-    }
-
-    Property getAt(String key) {
-        return properties.get(key)
+    Map<String, Property> getProperties() {
+        return properties
     }
 
     Section getRootSection() {
