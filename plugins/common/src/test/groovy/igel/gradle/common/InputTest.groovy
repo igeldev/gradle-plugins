@@ -19,6 +19,7 @@ package igel.gradle.common
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
+import org.junit.Before
 import org.junit.Test
 
 class InputTest {
@@ -119,10 +120,12 @@ class InputTest {
         ], section_1.properties*.key)
     }
 
-    @Test
-    void load1() {
-        Input input = new Input()
-        input.rootSection {
+    Input inputLoad
+
+    @Before
+    void initLoad() {
+        inputLoad = new Input()
+        inputLoad.rootSection {
             it.section(FMT_SECTION_NAME.format('1'), FMT_SECTION_DESCRIPTION.format('1')) {
                 it.property(FMT_PROPERTY_KEY.format('1'),
                         FMT_PROPERTY_NAME.format('1'), FMT_PROPERTY_DESCRIPTION.format('1'))
@@ -133,98 +136,59 @@ class InputTest {
                     FMT_PROPERTY_NAME.format('3'), FMT_PROPERTY_DESCRIPTION.format('3'))
         }
 
-        Assert.assertNull(input.properties[FMT_PROPERTY_KEY.format('1')].value)
-        Assert.assertNull(input.properties[FMT_PROPERTY_KEY.format('2')].value)
-        Assert.assertNull(input.properties[FMT_PROPERTY_KEY.format('3')].value)
+        Assert.assertNull(inputLoad.properties[FMT_PROPERTY_KEY.format('1')].value)
+        Assert.assertNull(inputLoad.properties[FMT_PROPERTY_KEY.format('2')].value)
+        Assert.assertNull(inputLoad.properties[FMT_PROPERTY_KEY.format('3')].value)
+    }
 
+    @Test
+    void load1() {
         Map<String, ?> map = [:]
         map[FMT_PROPERTY_KEY.format('0')] = FMT_PROPERTY_VALUE.format('0')
         map[FMT_PROPERTY_KEY.format('1')] = FMT_PROPERTY_VALUE.format('1')
         map[FMT_PROPERTY_KEY.format('2')] = 2
-        input.load(map)
+        inputLoad.load(map)
 
-        Assert.assertEquals(FMT_PROPERTY_VALUE.format('1'), input.properties[FMT_PROPERTY_KEY.format('1')].value)
-        Assert.assertEquals('2', input.properties[FMT_PROPERTY_KEY.format('2')].value)
-        Assert.assertNull(input.properties[FMT_PROPERTY_KEY.format('3')].value)
+        Assert.assertEquals(FMT_PROPERTY_VALUE.format('1'), inputLoad.properties[FMT_PROPERTY_KEY.format('1')].value)
+        Assert.assertEquals('2', inputLoad.properties[FMT_PROPERTY_KEY.format('2')].value)
+        Assert.assertNull(inputLoad.properties[FMT_PROPERTY_KEY.format('3')].value)
     }
 
     @Test
     void load2() {
-        Input input = new Input()
-        input.rootSection {
-            it.section(FMT_SECTION_NAME.format('1'), FMT_SECTION_DESCRIPTION.format('1')) {
-                it.property(FMT_PROPERTY_KEY.format('1'),
-                        FMT_PROPERTY_NAME.format('1'), FMT_PROPERTY_DESCRIPTION.format('1'))
-            }
-            it.property(FMT_PROPERTY_KEY.format('2'),
-                    FMT_PROPERTY_NAME.format('2'), FMT_PROPERTY_DESCRIPTION.format('2'))
-            it.property(FMT_PROPERTY_KEY.format('3'),
-                    FMT_PROPERTY_NAME.format('3'), FMT_PROPERTY_DESCRIPTION.format('3'))
-        }
-
-        Assert.assertNull(input.properties[FMT_PROPERTY_KEY.format('1')].value)
-        Assert.assertNull(input.properties[FMT_PROPERTY_KEY.format('2')].value)
-        Assert.assertNull(input.properties[FMT_PROPERTY_KEY.format('3')].value)
-
         Project project = ProjectBuilder.builder().build();
         project.ext[FMT_PROPERTY_KEY.format('0')] = FMT_PROPERTY_VALUE.format('0')
         project.ext[FMT_PROPERTY_KEY.format('1')] = FMT_PROPERTY_VALUE.format('1')
         project.ext[FMT_PROPERTY_KEY.format('2')] = 2
-        input.load(project)
+        inputLoad.load(project)
 
-        Assert.assertEquals(FMT_PROPERTY_VALUE.format('1'), input.properties[FMT_PROPERTY_KEY.format('1')].value)
-        Assert.assertEquals('2', input.properties[FMT_PROPERTY_KEY.format('2')].value)
-        Assert.assertNull(input.properties[FMT_PROPERTY_KEY.format('3')].value)
+        Assert.assertEquals(FMT_PROPERTY_VALUE.format('1'), inputLoad.properties[FMT_PROPERTY_KEY.format('1')].value)
+        Assert.assertEquals('2', inputLoad.properties[FMT_PROPERTY_KEY.format('2')].value)
+        Assert.assertNull(inputLoad.properties[FMT_PROPERTY_KEY.format('3')].value)
     }
 
     @Test
     void load3() {
-        Input input = new Input()
-        input.rootSection {
-            it.section(FMT_SECTION_NAME.format('1'), FMT_SECTION_DESCRIPTION.format('1')) {
-                it.property(FMT_PROPERTY_KEY.format('1'),
-                        FMT_PROPERTY_NAME.format('1'), FMT_PROPERTY_DESCRIPTION.format('1'))
-            }
-            it.property(FMT_PROPERTY_KEY.format('2'),
-                    FMT_PROPERTY_NAME.format('2'), FMT_PROPERTY_DESCRIPTION.format('2'))
-        }
-
-        Assert.assertNull(input.properties[FMT_PROPERTY_KEY.format('1')].value)
-        Assert.assertNull(input.properties[FMT_PROPERTY_KEY.format('2')].value)
-
         Properties properties = new Properties()
         properties.setProperty(FMT_PROPERTY_KEY.format('0'), FMT_PROPERTY_VALUE.format('0'))
         properties.setProperty(FMT_PROPERTY_KEY.format('1'), FMT_PROPERTY_VALUE.format('1'))
-        input.load(properties)
+        inputLoad.load(properties)
 
-        Assert.assertEquals(FMT_PROPERTY_VALUE.format('1'), input.properties[FMT_PROPERTY_KEY.format('1')].value)
-        Assert.assertNull(input.properties[FMT_PROPERTY_KEY.format('2')].value)
+        Assert.assertEquals(FMT_PROPERTY_VALUE.format('1'), inputLoad.properties[FMT_PROPERTY_KEY.format('1')].value)
+        Assert.assertNull(inputLoad.properties[FMT_PROPERTY_KEY.format('2')].value)
     }
 
     @Test
     void load4() {
-        Input input = new Input()
-        input.rootSection {
-            it.section(FMT_SECTION_NAME.format('1'), FMT_SECTION_DESCRIPTION.format('1')) {
-                it.property(FMT_PROPERTY_KEY.format('1'),
-                        FMT_PROPERTY_NAME.format('1'), FMT_PROPERTY_DESCRIPTION.format('1'))
-            }
-            it.property(FMT_PROPERTY_KEY.format('2'),
-                    FMT_PROPERTY_NAME.format('2'), FMT_PROPERTY_DESCRIPTION.format('2'))
-        }
-
-        Assert.assertNull(input.properties[FMT_PROPERTY_KEY.format('1')].value)
-        Assert.assertNull(input.properties[FMT_PROPERTY_KEY.format('2')].value)
-
         Properties properties = new Properties()
         properties.setProperty(FMT_PROPERTY_KEY.format('0'), FMT_PROPERTY_VALUE.format('0'))
         properties.setProperty(FMT_PROPERTY_KEY.format('1'), FMT_PROPERTY_VALUE.format('1'))
         File propertiesFile = File.createTempFile('input-load-test-', '.properties')
-        propertiesFile.withOutputStream { properties.save(it, '') }
-        input.load(propertiesFile)
+        propertiesFile.withOutputStream { properties.store(it, '') }
+        inputLoad.load(propertiesFile)
 
-        Assert.assertEquals(FMT_PROPERTY_VALUE.format('1'), input.properties[FMT_PROPERTY_KEY.format('1')].value)
-        Assert.assertNull(input.properties[FMT_PROPERTY_KEY.format('2')].value)
+        Assert.assertEquals(FMT_PROPERTY_VALUE.format('1'), inputLoad.properties[FMT_PROPERTY_KEY.format('1')].value)
+        Assert.assertNull(inputLoad.properties[FMT_PROPERTY_KEY.format('2')].value)
     }
 
 }
