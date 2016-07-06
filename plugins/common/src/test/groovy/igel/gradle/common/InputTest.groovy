@@ -67,6 +67,8 @@ class InputTest {
                         FMT_PROPERTY_NAME.format('1-1'), FMT_PROPERTY_DESCRIPTION.format('1-1'))
                 it.property(FMT_PROPERTY_KEY.format('1-2'),
                         FMT_PROPERTY_NAME.format('1-2'), FMT_PROPERTY_DESCRIPTION.format('1-2'))
+                it.section(FMT_SECTION_NAME.format('1-3')) {
+                }
             }
             it.property(FMT_PROPERTY_KEY.format('2'), Input.Type.PASSWORD, FMT_PROPERTY_DEFAULT.format('2'),
                     FMT_PROPERTY_NAME.format('2'), FMT_PROPERTY_DESCRIPTION.format('2'))
@@ -74,32 +76,7 @@ class InputTest {
                     FMT_PROPERTY_NAME.format('3'), FMT_PROPERTY_DESCRIPTION.format('3'))
         }
 
-        Assert.assertEquals(4, input.properties.size())
-
-        Input.Property property_1_1 = input.properties[FMT_PROPERTY_KEY.format('1-1')]
-        Assert.assertEquals(Input.Type.MULTILINE, property_1_1.type)
-        Assert.assertNull(property_1_1.defaultValue)
-        Assert.assertEquals(FMT_PROPERTY_NAME.format('1-1'), property_1_1.name)
-        Assert.assertEquals(FMT_PROPERTY_DESCRIPTION.format('1-1'), property_1_1.description)
-
-        Input.Property property_1_2 = input.properties[FMT_PROPERTY_KEY.format('1-2')]
-        Assert.assertEquals(Input.Type.SINGLE_LINE, property_1_2.type)
-        Assert.assertNull(property_1_2.defaultValue)
-        Assert.assertEquals(FMT_PROPERTY_NAME.format('1-2'), property_1_2.name)
-        Assert.assertEquals(FMT_PROPERTY_DESCRIPTION.format('1-2'), property_1_2.description)
-
-        Input.Property property_2 = input.properties[FMT_PROPERTY_KEY.format('2')]
-        Assert.assertEquals(Input.Type.PASSWORD, property_2.type)
-        Assert.assertEquals(FMT_PROPERTY_DEFAULT.format('2'), property_2.defaultValue)
-        Assert.assertEquals(FMT_PROPERTY_NAME.format('2'), property_2.name)
-        Assert.assertEquals(FMT_PROPERTY_DESCRIPTION.format('2'), property_2.description)
-
-        Input.Property property_3 = input.properties[FMT_PROPERTY_KEY.format('3')]
-        Assert.assertEquals(Input.Type.SINGLE_LINE, property_3.type)
-        Assert.assertEquals(FMT_PROPERTY_DEFAULT.format('3'), property_3.defaultValue)
-        Assert.assertEquals(FMT_PROPERTY_NAME.format('3'), property_3.name)
-        Assert.assertEquals(FMT_PROPERTY_DESCRIPTION.format('3'), property_3.description)
-
+        Assert.assertNull(input.rootSection.owner)
         Assert.assertNull(input.rootSection.name)
         Assert.assertNull(input.rootSection.description)
         Assert.assertEquals([
@@ -111,14 +88,55 @@ class InputTest {
         ], input.rootSection.properties*.key)
 
         Input.Section section_1 = input.rootSection.sections[0]
+        Assert.assertEquals(input.rootSection, section_1.owner)
         Assert.assertEquals(FMT_SECTION_NAME.format('1'), section_1.name)
         Assert.assertEquals(FMT_SECTION_DESCRIPTION.format('1'), section_1.description)
         Assert.assertEquals([
+                FMT_SECTION_NAME.format('1-3')
         ], section_1.sections*.name)
         Assert.assertEquals([
                 FMT_PROPERTY_KEY.format('1-1'),
                 FMT_PROPERTY_KEY.format('1-2'),
         ], section_1.properties*.key)
+
+        Input.Section section_1_3 = section_1.sections[0]
+        Assert.assertEquals(section_1, section_1_3.owner)
+        Assert.assertEquals(FMT_SECTION_NAME.format('1-3'), section_1_3.name)
+        Assert.assertNull(section_1_3.description)
+        Assert.assertEquals([
+        ], section_1_3.sections*.name)
+        Assert.assertEquals([
+        ], section_1_3.properties*.key)
+
+        Assert.assertEquals(4, input.properties.size())
+
+        Input.Property property_1_1 = input.properties[FMT_PROPERTY_KEY.format('1-1')]
+        Assert.assertEquals(section_1, property_1_1.owner)
+        Assert.assertEquals(Input.Type.MULTILINE, property_1_1.type)
+        Assert.assertNull(property_1_1.defaultValue)
+        Assert.assertEquals(FMT_PROPERTY_NAME.format('1-1'), property_1_1.name)
+        Assert.assertEquals(FMT_PROPERTY_DESCRIPTION.format('1-1'), property_1_1.description)
+
+        Input.Property property_1_2 = input.properties[FMT_PROPERTY_KEY.format('1-2')]
+        Assert.assertEquals(section_1, property_1_2.owner)
+        Assert.assertEquals(Input.Type.SINGLE_LINE, property_1_2.type)
+        Assert.assertNull(property_1_2.defaultValue)
+        Assert.assertEquals(FMT_PROPERTY_NAME.format('1-2'), property_1_2.name)
+        Assert.assertEquals(FMT_PROPERTY_DESCRIPTION.format('1-2'), property_1_2.description)
+
+        Input.Property property_2 = input.properties[FMT_PROPERTY_KEY.format('2')]
+        Assert.assertEquals(input.rootSection, property_2.owner)
+        Assert.assertEquals(Input.Type.PASSWORD, property_2.type)
+        Assert.assertEquals(FMT_PROPERTY_DEFAULT.format('2'), property_2.defaultValue)
+        Assert.assertEquals(FMT_PROPERTY_NAME.format('2'), property_2.name)
+        Assert.assertEquals(FMT_PROPERTY_DESCRIPTION.format('2'), property_2.description)
+
+        Input.Property property_3 = input.properties[FMT_PROPERTY_KEY.format('3')]
+        Assert.assertEquals(input.rootSection, property_3.owner)
+        Assert.assertEquals(Input.Type.SINGLE_LINE, property_3.type)
+        Assert.assertEquals(FMT_PROPERTY_DEFAULT.format('3'), property_3.defaultValue)
+        Assert.assertEquals(FMT_PROPERTY_NAME.format('3'), property_3.name)
+        Assert.assertEquals(FMT_PROPERTY_DESCRIPTION.format('3'), property_3.description)
     }
 
     Input inputLoad
