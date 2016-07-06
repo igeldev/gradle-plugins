@@ -150,8 +150,17 @@ class Input {
 
     }
 
+    String title
     private Map<String, Property> properties = Collections.emptyMap()
     private Section rootSection = new Section(null, null, [], [])
+
+    Input() {
+        this('')
+    }
+
+    Input(String title) {
+        this.title = title
+    }
 
     Map<String, Property> getProperties() {
         return properties
