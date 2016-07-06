@@ -16,6 +16,7 @@
 
 package igel.gradle.common
 
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
@@ -189,6 +190,57 @@ class InputTest {
 
         Assert.assertEquals(FMT_PROPERTY_VALUE.format('1'), inputLoad.properties[FMT_PROPERTY_KEY.format('1')].value)
         Assert.assertNull(inputLoad.properties[FMT_PROPERTY_KEY.format('2')].value)
+    }
+
+    Input inputMissing
+
+    @Before
+    void initMissing() {
+        inputMissing = new Input()
+        inputMissing.rootSection {
+            it.section(FMT_SECTION_NAME.format('1'), FMT_SECTION_DESCRIPTION.format('1')) {
+                it.property(FMT_PROPERTY_KEY.format('1'), FMT_PROPERTY_DEFAULT.format('1'),
+                        FMT_PROPERTY_NAME.format('1'), FMT_PROPERTY_DESCRIPTION.format('1'))
+            }
+            it.property(FMT_PROPERTY_KEY.format('2'),
+                    FMT_PROPERTY_NAME.format('2'), FMT_PROPERTY_DESCRIPTION.format('2'))
+            it.property(FMT_PROPERTY_KEY.format('3'),
+                    FMT_PROPERTY_NAME.format('3'), FMT_PROPERTY_DESCRIPTION.format('3'))
+        }
+    }
+
+    @Test
+    void assertMissing1() {
+        try {
+            inputMissing.assertMissing()
+            Assert.fail('Test should fail')
+        } catch (GradleException e) {
+            Assert.assertEquals(
+                    "Property '${FMT_PROPERTY_KEY.format('2')}' and 1 more are missing" as String,
+                    e.message)
+        }
+    }
+
+    @Test
+    void assertMissing2() {
+        inputMissing.properties[FMT_PROPERTY_KEY.format('2')].value = FMT_PROPERTY_VALUE.format('2')
+
+        try {
+            inputMissing.assertMissing()
+            Assert.fail('Test should fail')
+        } catch (GradleException e) {
+            Assert.assertEquals(
+                    "Property '${FMT_PROPERTY_KEY.format('3')}' is missing" as String,
+                    e.message)
+        }
+    }
+
+    @Test
+    void assertMissing3() {
+        inputMissing.properties[FMT_PROPERTY_KEY.format('2')].value = FMT_PROPERTY_VALUE.format('2')
+        inputMissing.properties[FMT_PROPERTY_KEY.format('3')].value = FMT_PROPERTY_VALUE.format('3')
+
+        inputMissing.assertMissing()
     }
 
 }

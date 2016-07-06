@@ -187,6 +187,14 @@ class Input {
     }
 
     void assertMissing() throws GradleException {
+        List<String> missingKeys = properties.values()
+                .findAll { it.value == null && it.defaultValue == null }
+                .collect { it.key }
+        if (missingKeys.size() == 1) {
+            throw new GradleException("Property '${missingKeys[0]}' is missing")
+        } else if (missingKeys.size() > 1) {
+            throw new GradleException("Property '${missingKeys[0]}' and ${missingKeys.size() - 1} more are missing")
+        }
     }
 
     void load(File propertiesFile) {
