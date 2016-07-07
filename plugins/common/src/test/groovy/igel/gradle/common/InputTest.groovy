@@ -19,12 +19,14 @@ package igel.gradle.common
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
 class InputTest {
 
+    static final String INPUT_TITLE = 'Input Title'
     static final String FMT_SECTION_NAME = 'Section #%s'
     static final String FMT_SECTION_DESCRIPTION = 'Section #%s description.'
     static final String FMT_PROPERTY_KEY = 'key-%s'
@@ -259,6 +261,80 @@ class InputTest {
         inputMissing.properties[FMT_PROPERTY_KEY.format('3')].value = FMT_PROPERTY_VALUE.format('3')
 
         inputMissing.assertMissing()
+    }
+
+    Input inputUI
+
+    @Before
+    void initUI() {
+        inputUI = new Input(INPUT_TITLE)
+        inputUI.rootSection {
+            it.section(FMT_SECTION_NAME.format('1'), FMT_SECTION_DESCRIPTION.format('1')) {
+                it.property(FMT_PROPERTY_KEY.format('1.1'), Input.Type.MULTILINE,
+                        FMT_PROPERTY_NAME.format('1.1'), FMT_PROPERTY_DESCRIPTION.format('1.1'))
+                it.property(FMT_PROPERTY_KEY.format('1.2'), Input.Type.PASSWORD, FMT_PROPERTY_DEFAULT.format('1.2'),
+                        FMT_PROPERTY_NAME.format('1.2'), FMT_PROPERTY_DESCRIPTION.format('1.2'))
+            }
+
+            it.section(FMT_SECTION_NAME.format('2'), FMT_SECTION_DESCRIPTION.format('2')) {
+                it.property(FMT_PROPERTY_KEY.format('2.1'), FMT_PROPERTY_DEFAULT.format('2.1'),
+                        FMT_PROPERTY_NAME.format('2.1'), FMT_PROPERTY_DESCRIPTION.format('2.1'))
+            }
+
+            it.section(FMT_SECTION_NAME.format('3'), FMT_SECTION_DESCRIPTION.format('3')) {
+                it.property(FMT_PROPERTY_KEY.format('3.1'),
+                        FMT_PROPERTY_NAME.format('3.1'), FMT_PROPERTY_DESCRIPTION.format('3.1'))
+                it.property(FMT_PROPERTY_KEY.format('3.2'),
+                        FMT_PROPERTY_NAME.format('3.2'), FMT_PROPERTY_DESCRIPTION.format('3.2'))
+
+                it.section(FMT_SECTION_NAME.format('3.3'), FMT_SECTION_DESCRIPTION.format('3.3')) {
+                    it.property(FMT_PROPERTY_KEY.format('3.3.1'),
+                            FMT_PROPERTY_NAME.format('3.3.1'), FMT_PROPERTY_DESCRIPTION.format('3.3.1'))
+                    it.property(FMT_PROPERTY_KEY.format('3.3.2'),
+                            FMT_PROPERTY_NAME.format('3.3.2'), FMT_PROPERTY_DESCRIPTION.format('3.3.2'))
+                }
+            }
+            it.property(FMT_PROPERTY_KEY.format('4'),
+                    FMT_PROPERTY_NAME.format('4'), FMT_PROPERTY_DESCRIPTION.format('4'))
+            it.property(FMT_PROPERTY_KEY.format('5'),
+                    FMT_PROPERTY_NAME.format('5'), FMT_PROPERTY_DESCRIPTION.format('5'))
+        }
+    }
+
+    @After
+    void hideUI() {
+        inputUI.hideUI()
+    }
+
+    @Test
+    void uiVisible() {
+        Assert.assertFalse(inputUI.visible);
+        inputUI.showUI()
+        Assert.assertTrue(inputUI.visible);
+        inputUI.hideUI()
+    }
+
+    @Test
+    void uiJoin() {
+        List<String> messages = []
+
+        Thread.start {
+            Thread.sleep(1000)
+            messages << 'hideUI'
+            inputUI.hideUI()
+        }
+
+        messages << 'showUI'
+        inputUI.showUI()
+
+        messages << 'joinUI'
+        inputUI.joinUI()
+
+        messages << 'done'
+
+        Assert.assertEquals([
+                'showUI', 'joinUI', 'hideUI', 'done'
+        ], messages)
     }
 
 }
