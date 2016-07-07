@@ -230,17 +230,29 @@ class Input {
         }
     }
 
+    private InputDialog dialog = null
+
     boolean isVisible() {
-        return false
+        return dialog != null && dialog.visible
     }
 
     void showUI() {
+        if (!isVisible()) {
+            dialog = new InputDialog(this)
+            dialog.showUI()
+        }
     }
 
     void hideUI() {
+        if (isVisible()) {
+            dialog.hideUI()
+        }
     }
 
     void joinUI() throws InterruptedException {
+        if (isVisible()) {
+            dialog.joinUI()
+        }
     }
 
 }
