@@ -1,15 +1,32 @@
 package igel.gradle.common
 
 import javax.swing.*
+import javax.swing.border.TitledBorder
 import java.awt.*
 import java.awt.event.*
 
 class InputDialog extends JDialog {
 
+    private static JPanel createSectionUI(Input.Section section) {
+        JPanel sectionPane = new JPanel()
+
+        sectionPane.border = new TitledBorder(section.name)
+        sectionPane.toolTipText = section.description
+
+        // todo implement
+        sectionPane.layout = new GridBagLayout()
+        32.times {
+            sectionPane.add(
+                    new JLabel("Item #$it"),
+                    new GridBagConstraints(gridwidth: GridBagConstraints.REMAINDER))
+        }
+
+        return sectionPane
+    }
+
     private final Object lock = new Object()
 
     private JPanel contentPane
-    private JPanel inputPane
     private JButton buttonOK
     private JButton buttonInterrupt
 
@@ -19,12 +36,12 @@ class InputDialog extends JDialog {
 
         // input pane
 
-        this.inputPane = new JPanel()
-        // todo add input UI here into inputPane
+        JScrollPane scrollPane = new JScrollPane(createSectionUI(input.rootSection))
 
-        contentPane.add(inputPane, new GridBagConstraints(
+        contentPane.add(scrollPane, new GridBagConstraints(
                 gridwidth: GridBagConstraints.REMAINDER,
                 fill: GridBagConstraints.BOTH,
+                insets: new Insets(4, 4, 4, 4),
                 weightx: 1.0, weighty: 1.0))
 
         // button space
