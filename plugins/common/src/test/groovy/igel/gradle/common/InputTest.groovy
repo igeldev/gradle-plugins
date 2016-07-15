@@ -26,14 +26,21 @@ import org.junit.Test
 
 class InputTest {
 
-    static final String INPUT_TITLE = 'Input Title'
-    static final String FMT_SECTION_NAME = 'Section #%s'
-    static final String FMT_SECTION_DESCRIPTION = 'Section #%s description.'
-    static final String FMT_PROPERTY_KEY = 'key-%s'
-    static final String FMT_PROPERTY_DEFAULT = 'Default %s'
-    static final String FMT_PROPERTY_NAME = 'Property #%s'
-    static final String FMT_PROPERTY_VALUE = 'Value #%s'
-    static final String FMT_PROPERTY_DESCRIPTION = 'Property #%s description.'
+    static String getInputTitle() { 'Input title' }
+
+    static String getSectionName(String id) { "Section #$id" }
+
+    static String getSectionDescription(String id) { "Section #$id description" }
+
+    static String getPropertyKey(String id) { "key-#$id" }
+
+    static String getPropertyDefault(String id) { "Default #$id" }
+
+    static String getPropertyName(String id) { "Property #$id" }
+
+    static String getPropertyValue(String id) { "Value #$id" }
+
+    static String getPropertyDescription(String id) { "Property #$id description" }
 
     @Test
     void contentNothing1() {
@@ -64,46 +71,46 @@ class InputTest {
     void contentSimple() {
         Input input = new Input()
         input.rootSection {
-            it.section(FMT_SECTION_NAME.format('1'), FMT_SECTION_DESCRIPTION.format('1')) {
-                it.property(FMT_PROPERTY_KEY.format('1-1'), Input.Type.MULTILINE,
-                        FMT_PROPERTY_NAME.format('1-1'), FMT_PROPERTY_DESCRIPTION.format('1-1'))
-                it.property(FMT_PROPERTY_KEY.format('1-2'),
-                        FMT_PROPERTY_NAME.format('1-2'), FMT_PROPERTY_DESCRIPTION.format('1-2'))
-                it.section(FMT_SECTION_NAME.format('1-3')) {
+            it.section(getSectionName('1'), getSectionDescription('1')) {
+                it.property(getPropertyKey('1-1'), Input.Type.MULTILINE,
+                        getPropertyName('1-1'), getPropertyDescription('1-1'))
+                it.property(getPropertyKey('1-2'),
+                        getPropertyName('1-2'), getPropertyDescription('1-2'))
+                it.section(getSectionName('1-3')) {
                 }
             }
-            it.property(FMT_PROPERTY_KEY.format('2'), Input.Type.PASSWORD, FMT_PROPERTY_DEFAULT.format('2'),
-                    FMT_PROPERTY_NAME.format('2'), FMT_PROPERTY_DESCRIPTION.format('2'))
-            it.property(FMT_PROPERTY_KEY.format('3'), FMT_PROPERTY_DEFAULT.format('3'),
-                    FMT_PROPERTY_NAME.format('3'), FMT_PROPERTY_DESCRIPTION.format('3'))
+            it.property(getPropertyKey('2'), Input.Type.PASSWORD, getPropertyDefault('2'),
+                    getPropertyName('2'), getPropertyDescription('2'))
+            it.property(getPropertyKey('3'), getPropertyDefault('3'),
+                    getPropertyName('3'), getPropertyDescription('3'))
         }
 
         Assert.assertNull(input.rootSection.owner)
         Assert.assertNull(input.rootSection.name)
         Assert.assertNull(input.rootSection.description)
         Assert.assertEquals([
-                FMT_SECTION_NAME.format('1'),
+                getSectionName('1'),
         ], input.rootSection.sections*.name)
         Assert.assertEquals([
-                FMT_PROPERTY_KEY.format('2'),
-                FMT_PROPERTY_KEY.format('3'),
+                getPropertyKey('2'),
+                getPropertyKey('3'),
         ], input.rootSection.properties*.key)
 
         Input.Section section_1 = input.rootSection.sections[0]
         Assert.assertEquals(input.rootSection, section_1.owner)
-        Assert.assertEquals(FMT_SECTION_NAME.format('1'), section_1.name)
-        Assert.assertEquals(FMT_SECTION_DESCRIPTION.format('1'), section_1.description)
+        Assert.assertEquals(getSectionName('1'), section_1.name)
+        Assert.assertEquals(getSectionDescription('1'), section_1.description)
         Assert.assertEquals([
-                FMT_SECTION_NAME.format('1-3')
+                getSectionName('1-3')
         ], section_1.sections*.name)
         Assert.assertEquals([
-                FMT_PROPERTY_KEY.format('1-1'),
-                FMT_PROPERTY_KEY.format('1-2'),
+                getPropertyKey('1-1'),
+                getPropertyKey('1-2'),
         ], section_1.properties*.key)
 
         Input.Section section_1_3 = section_1.sections[0]
         Assert.assertEquals(section_1, section_1_3.owner)
-        Assert.assertEquals(FMT_SECTION_NAME.format('1-3'), section_1_3.name)
+        Assert.assertEquals(getSectionName('1-3'), section_1_3.name)
         Assert.assertNull(section_1_3.description)
         Assert.assertEquals([
         ], section_1_3.sections*.name)
@@ -112,33 +119,33 @@ class InputTest {
 
         Assert.assertEquals(4, input.properties.size())
 
-        Input.Property property_1_1 = input.properties[FMT_PROPERTY_KEY.format('1-1')]
+        Input.Property property_1_1 = input.properties[getPropertyKey('1-1')]
         Assert.assertEquals(section_1, property_1_1.owner)
         Assert.assertEquals(Input.Type.MULTILINE, property_1_1.type)
         Assert.assertNull(property_1_1.defaultValue)
-        Assert.assertEquals(FMT_PROPERTY_NAME.format('1-1'), property_1_1.name)
-        Assert.assertEquals(FMT_PROPERTY_DESCRIPTION.format('1-1'), property_1_1.description)
+        Assert.assertEquals(getPropertyName('1-1'), property_1_1.name)
+        Assert.assertEquals(getPropertyDescription('1-1'), property_1_1.description)
 
-        Input.Property property_1_2 = input.properties[FMT_PROPERTY_KEY.format('1-2')]
+        Input.Property property_1_2 = input.properties[getPropertyKey('1-2')]
         Assert.assertEquals(section_1, property_1_2.owner)
         Assert.assertEquals(Input.Type.SINGLE_LINE, property_1_2.type)
         Assert.assertNull(property_1_2.defaultValue)
-        Assert.assertEquals(FMT_PROPERTY_NAME.format('1-2'), property_1_2.name)
-        Assert.assertEquals(FMT_PROPERTY_DESCRIPTION.format('1-2'), property_1_2.description)
+        Assert.assertEquals(getPropertyName('1-2'), property_1_2.name)
+        Assert.assertEquals(getPropertyDescription('1-2'), property_1_2.description)
 
-        Input.Property property_2 = input.properties[FMT_PROPERTY_KEY.format('2')]
+        Input.Property property_2 = input.properties[getPropertyKey('2')]
         Assert.assertEquals(input.rootSection, property_2.owner)
         Assert.assertEquals(Input.Type.PASSWORD, property_2.type)
-        Assert.assertEquals(FMT_PROPERTY_DEFAULT.format('2'), property_2.defaultValue)
-        Assert.assertEquals(FMT_PROPERTY_NAME.format('2'), property_2.name)
-        Assert.assertEquals(FMT_PROPERTY_DESCRIPTION.format('2'), property_2.description)
+        Assert.assertEquals(getPropertyDefault('2'), property_2.defaultValue)
+        Assert.assertEquals(getPropertyName('2'), property_2.name)
+        Assert.assertEquals(getPropertyDescription('2'), property_2.description)
 
-        Input.Property property_3 = input.properties[FMT_PROPERTY_KEY.format('3')]
+        Input.Property property_3 = input.properties[getPropertyKey('3')]
         Assert.assertEquals(input.rootSection, property_3.owner)
         Assert.assertEquals(Input.Type.SINGLE_LINE, property_3.type)
-        Assert.assertEquals(FMT_PROPERTY_DEFAULT.format('3'), property_3.defaultValue)
-        Assert.assertEquals(FMT_PROPERTY_NAME.format('3'), property_3.name)
-        Assert.assertEquals(FMT_PROPERTY_DESCRIPTION.format('3'), property_3.description)
+        Assert.assertEquals(getPropertyDefault('3'), property_3.defaultValue)
+        Assert.assertEquals(getPropertyName('3'), property_3.name)
+        Assert.assertEquals(getPropertyDescription('3'), property_3.description)
     }
 
     Input inputLoad
@@ -147,69 +154,69 @@ class InputTest {
     void initLoad() {
         inputLoad = new Input()
         inputLoad.rootSection {
-            it.section(FMT_SECTION_NAME.format('1'), FMT_SECTION_DESCRIPTION.format('1')) {
-                it.property(FMT_PROPERTY_KEY.format('1'),
-                        FMT_PROPERTY_NAME.format('1'), FMT_PROPERTY_DESCRIPTION.format('1'))
+            it.section(getSectionName('1'), getSectionDescription('1')) {
+                it.property(getPropertyKey('1'),
+                        getPropertyName('1'), getPropertyDescription('1'))
             }
-            it.property(FMT_PROPERTY_KEY.format('2'),
-                    FMT_PROPERTY_NAME.format('2'), FMT_PROPERTY_DESCRIPTION.format('2'))
-            it.property(FMT_PROPERTY_KEY.format('3'),
-                    FMT_PROPERTY_NAME.format('3'), FMT_PROPERTY_DESCRIPTION.format('3'))
+            it.property(getPropertyKey('2'),
+                    getPropertyName('2'), getPropertyDescription('2'))
+            it.property(getPropertyKey('3'),
+                    getPropertyName('3'), getPropertyDescription('3'))
         }
 
-        Assert.assertNull(inputLoad.properties[FMT_PROPERTY_KEY.format('1')].value)
-        Assert.assertNull(inputLoad.properties[FMT_PROPERTY_KEY.format('2')].value)
-        Assert.assertNull(inputLoad.properties[FMT_PROPERTY_KEY.format('3')].value)
+        Assert.assertNull(inputLoad.properties[getPropertyKey('1')].value)
+        Assert.assertNull(inputLoad.properties[getPropertyKey('2')].value)
+        Assert.assertNull(inputLoad.properties[getPropertyKey('3')].value)
     }
 
     @Test
     void load1() {
         Map<String, ?> map = [:]
-        map[FMT_PROPERTY_KEY.format('0')] = FMT_PROPERTY_VALUE.format('0')
-        map[FMT_PROPERTY_KEY.format('1')] = FMT_PROPERTY_VALUE.format('1')
-        map[FMT_PROPERTY_KEY.format('2')] = 2
+        map[getPropertyKey('0')] = getPropertyValue('0')
+        map[getPropertyKey('1')] = getPropertyValue('1')
+        map[getPropertyKey('2')] = 2
         inputLoad.load(map)
 
-        Assert.assertEquals(FMT_PROPERTY_VALUE.format('1'), inputLoad.properties[FMT_PROPERTY_KEY.format('1')].value)
-        Assert.assertEquals('2', inputLoad.properties[FMT_PROPERTY_KEY.format('2')].value)
-        Assert.assertNull(inputLoad.properties[FMT_PROPERTY_KEY.format('3')].value)
+        Assert.assertEquals(getPropertyValue('1'), inputLoad.properties[getPropertyKey('1')].value)
+        Assert.assertEquals('2', inputLoad.properties[getPropertyKey('2')].value)
+        Assert.assertNull(inputLoad.properties[getPropertyKey('3')].value)
     }
 
     @Test
     void load2() {
         Project project = ProjectBuilder.builder().build();
-        project.ext[FMT_PROPERTY_KEY.format('0')] = FMT_PROPERTY_VALUE.format('0')
-        project.ext[FMT_PROPERTY_KEY.format('1')] = FMT_PROPERTY_VALUE.format('1')
-        project.ext[FMT_PROPERTY_KEY.format('2')] = 2
+        project.ext[getPropertyKey('0')] = getPropertyValue('0')
+        project.ext[getPropertyKey('1')] = getPropertyValue('1')
+        project.ext[getPropertyKey('2')] = 2
         inputLoad.load(project)
 
-        Assert.assertEquals(FMT_PROPERTY_VALUE.format('1'), inputLoad.properties[FMT_PROPERTY_KEY.format('1')].value)
-        Assert.assertEquals('2', inputLoad.properties[FMT_PROPERTY_KEY.format('2')].value)
-        Assert.assertNull(inputLoad.properties[FMT_PROPERTY_KEY.format('3')].value)
+        Assert.assertEquals(getPropertyValue('1'), inputLoad.properties[getPropertyKey('1')].value)
+        Assert.assertEquals('2', inputLoad.properties[getPropertyKey('2')].value)
+        Assert.assertNull(inputLoad.properties[getPropertyKey('3')].value)
     }
 
     @Test
     void load3() {
         Properties properties = new Properties()
-        properties.setProperty(FMT_PROPERTY_KEY.format('0'), FMT_PROPERTY_VALUE.format('0'))
-        properties.setProperty(FMT_PROPERTY_KEY.format('1'), FMT_PROPERTY_VALUE.format('1'))
+        properties.setProperty(getPropertyKey('0'), getPropertyValue('0'))
+        properties.setProperty(getPropertyKey('1'), getPropertyValue('1'))
         inputLoad.load(properties)
 
-        Assert.assertEquals(FMT_PROPERTY_VALUE.format('1'), inputLoad.properties[FMT_PROPERTY_KEY.format('1')].value)
-        Assert.assertNull(inputLoad.properties[FMT_PROPERTY_KEY.format('2')].value)
+        Assert.assertEquals(getPropertyValue('1'), inputLoad.properties[getPropertyKey('1')].value)
+        Assert.assertNull(inputLoad.properties[getPropertyKey('2')].value)
     }
 
     @Test
     void load4() {
         Properties properties = new Properties()
-        properties.setProperty(FMT_PROPERTY_KEY.format('0'), FMT_PROPERTY_VALUE.format('0'))
-        properties.setProperty(FMT_PROPERTY_KEY.format('1'), FMT_PROPERTY_VALUE.format('1'))
+        properties.setProperty(getPropertyKey('0'), getPropertyValue('0'))
+        properties.setProperty(getPropertyKey('1'), getPropertyValue('1'))
         File propertiesFile = File.createTempFile('input-load-test-', '.properties')
         propertiesFile.withOutputStream { properties.store(it, '') }
         inputLoad.load(propertiesFile)
 
-        Assert.assertEquals(FMT_PROPERTY_VALUE.format('1'), inputLoad.properties[FMT_PROPERTY_KEY.format('1')].value)
-        Assert.assertNull(inputLoad.properties[FMT_PROPERTY_KEY.format('2')].value)
+        Assert.assertEquals(getPropertyValue('1'), inputLoad.properties[getPropertyKey('1')].value)
+        Assert.assertNull(inputLoad.properties[getPropertyKey('2')].value)
     }
 
     Input inputMissing
@@ -218,14 +225,14 @@ class InputTest {
     void initMissing() {
         inputMissing = new Input()
         inputMissing.rootSection {
-            it.section(FMT_SECTION_NAME.format('1'), FMT_SECTION_DESCRIPTION.format('1')) {
-                it.property(FMT_PROPERTY_KEY.format('1'), FMT_PROPERTY_DEFAULT.format('1'),
-                        FMT_PROPERTY_NAME.format('1'), FMT_PROPERTY_DESCRIPTION.format('1'))
+            it.section(getSectionName('1'), getSectionDescription('1')) {
+                it.property(getPropertyKey('1'), getPropertyDefault('1'),
+                        getPropertyName('1'), getPropertyDescription('1'))
             }
-            it.property(FMT_PROPERTY_KEY.format('2'),
-                    FMT_PROPERTY_NAME.format('2'), FMT_PROPERTY_DESCRIPTION.format('2'))
-            it.property(FMT_PROPERTY_KEY.format('3'),
-                    FMT_PROPERTY_NAME.format('3'), FMT_PROPERTY_DESCRIPTION.format('3'))
+            it.property(getPropertyKey('2'),
+                    getPropertyName('2'), getPropertyDescription('2'))
+            it.property(getPropertyKey('3'),
+                    getPropertyName('3'), getPropertyDescription('3'))
         }
     }
 
@@ -236,29 +243,29 @@ class InputTest {
             Assert.fail('Test should fail')
         } catch (GradleException e) {
             Assert.assertEquals(
-                    "Property '${FMT_PROPERTY_KEY.format('2')}' and 1 more are missing" as String,
+                    "Property '${getPropertyKey('2')}' and 1 more are missing" as String,
                     e.message)
         }
     }
 
     @Test
     void assertMissing2() {
-        inputMissing.properties[FMT_PROPERTY_KEY.format('2')].value = FMT_PROPERTY_VALUE.format('2')
+        inputMissing.properties[getPropertyKey('2')].value = getPropertyValue('2')
 
         try {
             inputMissing.assertMissing()
             Assert.fail('Test should fail')
         } catch (GradleException e) {
             Assert.assertEquals(
-                    "Property '${FMT_PROPERTY_KEY.format('3')}' is missing" as String,
+                    "Property '${getPropertyKey('3')}' is missing" as String,
                     e.message)
         }
     }
 
     @Test
     void assertMissing3() {
-        inputMissing.properties[FMT_PROPERTY_KEY.format('2')].value = FMT_PROPERTY_VALUE.format('2')
-        inputMissing.properties[FMT_PROPERTY_KEY.format('3')].value = FMT_PROPERTY_VALUE.format('3')
+        inputMissing.properties[getPropertyKey('2')].value = getPropertyValue('2')
+        inputMissing.properties[getPropertyKey('3')].value = getPropertyValue('3')
 
         inputMissing.assertMissing()
     }
@@ -267,37 +274,37 @@ class InputTest {
 
     @Before
     void initUI() {
-        inputUI = new Input(INPUT_TITLE)
+        inputUI = new Input(getInputTitle())
         inputUI.rootSection {
-            it.section(FMT_SECTION_NAME.format('1'), FMT_SECTION_DESCRIPTION.format('1')) {
-                it.property(FMT_PROPERTY_KEY.format('1.1'), Input.Type.MULTILINE,
-                        FMT_PROPERTY_NAME.format('1.1'), FMT_PROPERTY_DESCRIPTION.format('1.1'))
-                it.property(FMT_PROPERTY_KEY.format('1.2'), Input.Type.PASSWORD, FMT_PROPERTY_DEFAULT.format('1.2'),
-                        FMT_PROPERTY_NAME.format('1.2'), FMT_PROPERTY_DESCRIPTION.format('1.2'))
+            it.section(getSectionName('1'), getSectionDescription('1')) {
+                it.property(getPropertyKey('1.1'), Input.Type.MULTILINE,
+                        getPropertyName('1.1'), getPropertyDescription('1.1'))
+                it.property(getPropertyKey('1.2'), Input.Type.PASSWORD, getPropertyDefault('1.2'),
+                        getPropertyName('1.2'), getPropertyDescription('1.2'))
             }
 
-            it.section(FMT_SECTION_NAME.format('2'), FMT_SECTION_DESCRIPTION.format('2')) {
-                it.property(FMT_PROPERTY_KEY.format('2.1'), FMT_PROPERTY_DEFAULT.format('2.1'),
-                        FMT_PROPERTY_NAME.format('2.1'), FMT_PROPERTY_DESCRIPTION.format('2.1'))
+            it.section(getSectionName('2'), getSectionDescription('2')) {
+                it.property(getPropertyKey('2.1'), getPropertyDefault('2.1'),
+                        getPropertyName('2.1'), getPropertyDescription('2.1'))
             }
 
-            it.section(FMT_SECTION_NAME.format('3'), FMT_SECTION_DESCRIPTION.format('3')) {
-                it.property(FMT_PROPERTY_KEY.format('3.1'),
-                        FMT_PROPERTY_NAME.format('3.1'), FMT_PROPERTY_DESCRIPTION.format('3.1'))
-                it.property(FMT_PROPERTY_KEY.format('3.2'),
-                        FMT_PROPERTY_NAME.format('3.2'), FMT_PROPERTY_DESCRIPTION.format('3.2'))
+            it.section(getSectionName('3'), getSectionDescription('3')) {
+                it.property(getPropertyKey('3.1'),
+                        getPropertyName('3.1'), getPropertyDescription('3.1'))
+                it.property(getPropertyKey('3.2'),
+                        getPropertyName('3.2'), getPropertyDescription('3.2'))
 
-                it.section(FMT_SECTION_NAME.format('3.3'), FMT_SECTION_DESCRIPTION.format('3.3')) {
-                    it.property(FMT_PROPERTY_KEY.format('3.3.1'),
-                            FMT_PROPERTY_NAME.format('3.3.1'), FMT_PROPERTY_DESCRIPTION.format('3.3.1'))
-                    it.property(FMT_PROPERTY_KEY.format('3.3.2'),
-                            FMT_PROPERTY_NAME.format('3.3.2'), FMT_PROPERTY_DESCRIPTION.format('3.3.2'))
+                it.section(getSectionName('3.3'), getSectionDescription('3.3')) {
+                    it.property(getPropertyKey('3.3.1'),
+                            getPropertyName('3.3.1'), getPropertyDescription('3.3.1'))
+                    it.property(getPropertyKey('3.3.2'),
+                            getPropertyName('3.3.2'), getPropertyDescription('3.3.2'))
                 }
             }
-            it.property(FMT_PROPERTY_KEY.format('4'),
-                    FMT_PROPERTY_NAME.format('4'), FMT_PROPERTY_DESCRIPTION.format('4'))
-            it.property(FMT_PROPERTY_KEY.format('5'),
-                    FMT_PROPERTY_NAME.format('5'), FMT_PROPERTY_DESCRIPTION.format('5'))
+            it.property(getPropertyKey('4'),
+                    getPropertyName('4'), getPropertyDescription('4'))
+            it.property(getPropertyKey('5'),
+                    getPropertyName('5'), getPropertyDescription('5'))
         }
     }
 
