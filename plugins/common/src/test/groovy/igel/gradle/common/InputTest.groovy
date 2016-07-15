@@ -184,7 +184,7 @@ class InputTest {
 
     @Test
     void load2() {
-        Project project = ProjectBuilder.builder().build();
+        Project project = ProjectBuilder.builder().build()
         project.ext[getPropertyKey('0')] = getPropertyValue('0')
         project.ext[getPropertyKey('1')] = getPropertyValue('1')
         project.ext[getPropertyKey('2')] = 2
@@ -315,9 +315,9 @@ class InputTest {
 
     @Test
     void uiVisible() {
-        Assert.assertFalse(inputUI.visible);
+        Assert.assertFalse(inputUI.visible)
         inputUI.showUI()
-        Assert.assertTrue(inputUI.visible);
+        Assert.assertTrue(inputUI.visible)
         inputUI.hideUI()
     }
 
