@@ -2,6 +2,7 @@ package igel.gradle.common
 
 import javax.swing.*
 import javax.swing.border.TitledBorder
+import javax.swing.text.JTextComponent
 import java.awt.*
 import java.awt.event.*
 
@@ -13,12 +14,54 @@ class InputDialog extends JDialog {
         sectionPane.border = new TitledBorder(section.name)
         sectionPane.toolTipText = section.description
 
-        // todo implement
         sectionPane.layout = new GridBagLayout()
-        32.times {
-            sectionPane.add(
-                    new JLabel("Item #$it"),
-                    new GridBagConstraints(gridwidth: GridBagConstraints.REMAINDER))
+
+        section.sections.each { Input.Section nestedSection ->
+            sectionPane.add(createSectionUI(nestedSection), new GridBagConstraints(
+                    gridwidth: GridBagConstraints.REMAINDER,
+                    fill: GridBagConstraints.HORIZONTAL, weightx: 1))
+        }
+
+        section.properties.each { Input.Property nestedProperty ->
+            // property label
+
+            JLabel labelComponent = new JLabel()
+            labelComponent.text = nestedProperty.name
+            labelComponent.toolTipText = nestedProperty.description
+
+            sectionPane.add(labelComponent, new GridBagConstraints(
+                    gridwidth: 1, weightx: 0,
+                    fill: GridBagConstraints.HORIZONTAL,
+                    insets: new Insets(4, 8, 4, 8)))
+
+            // property field
+
+            JTextComponent fieldComponent
+            JComponent fieldContainer
+            switch (nestedProperty.type) {
+                case Input.Type.SINGLE_LINE:
+                    JTextField singleLineComponent = new JTextField()
+                    fieldComponent = fieldContainer = singleLineComponent
+                    break
+                case Input.Type.PASSWORD:
+                    JPasswordField passwordComponent = new JPasswordField()
+                    fieldComponent = fieldContainer = passwordComponent
+                    break
+                case Input.Type.MULTILINE:
+                    JTextArea multilineComponent = new JTextArea(5, 10)
+                    fieldComponent = multilineComponent
+                    fieldContainer = new JScrollPane(multilineComponent)
+                    break
+                default:
+                    throw new IllegalArgumentException("Unknown property type: $nestedProperty.type")
+            }
+            fieldComponent.text = nestedProperty.value ?: nestedProperty.defaultValue
+            fieldComponent.toolTipText = nestedProperty.description
+
+            sectionPane.add(fieldContainer, new GridBagConstraints(
+                    gridwidth: GridBagConstraints.REMAINDER, weightx: 1,
+                    fill: GridBagConstraints.HORIZONTAL,
+                    insets: new Insets(4, 8, 4, 8)))
         }
 
         return sectionPane
