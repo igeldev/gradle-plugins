@@ -24,7 +24,14 @@ import java.awt.event.*
 
 class InputDialog extends JDialog {
 
-    private static JPanel createSectionUI(Input.Section section) {
+    private final Object lock = new Object()
+
+    private JPanel contentPane
+    private Map<String, JTextComponent> propertyFieldMap = [:]
+    private JButton buttonOK
+    private JButton buttonInterrupt
+
+    private JPanel createSectionUI(Input.Section section) {
         JPanel sectionPane = new JPanel()
 
         sectionPane.border = new TitledBorder(section.name)
@@ -73,6 +80,7 @@ class InputDialog extends JDialog {
             }
             fieldComponent.text = nestedProperty.value ?: nestedProperty.defaultValue
             fieldComponent.toolTipText = nestedProperty.description
+            propertyFieldMap[nestedProperty.key] = fieldComponent
 
             sectionPane.add(fieldContainer, new GridBagConstraints(
                     gridwidth: GridBagConstraints.REMAINDER, weightx: 1,
@@ -82,12 +90,6 @@ class InputDialog extends JDialog {
 
         return sectionPane
     }
-
-    private final Object lock = new Object()
-
-    private JPanel contentPane
-    private JButton buttonOK
-    private JButton buttonInterrupt
 
     private void setup(Input input) {
         this.contentPane = new JPanel()
