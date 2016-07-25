@@ -20,7 +20,9 @@ import javax.swing.*
 import javax.swing.border.TitledBorder
 import javax.swing.text.JTextComponent
 import java.awt.*
-import java.awt.event.*
+import java.awt.event.KeyEvent
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
 
 class InputDialog extends JDialog {
 
@@ -137,19 +139,9 @@ class InputDialog extends JDialog {
         setContentPane(contentPane)
         getRootPane().setDefaultButton(buttonOK)
 
-        buttonOK.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // todo save input values here
-                hideUI()
-            }
-        })
+        buttonOK.addActionListener({ onPressedOK() })
 
-        buttonInterrupt.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // todo fail build
-                hideUI()
-            }
-        })
+        buttonInterrupt.addActionListener({ onPressedInterrupt() })
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE)
         addWindowListener(new WindowAdapter() {
@@ -162,7 +154,7 @@ class InputDialog extends JDialog {
         })
 
         contentPane.registerKeyboardAction(
-                { dispose() },
+                { onPressedInterrupt() },
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 JComponent.WHEN_IN_FOCUSED_WINDOW)
     }
@@ -179,6 +171,16 @@ class InputDialog extends JDialog {
         this.alwaysOnTop = true
         this.locationRelativeTo = null
         this.visible = true
+    }
+
+    void onPressedOK() {
+        // todo save input values here
+        hideUI()
+    }
+
+    void onPressedInterrupt() {
+        // todo fail build
+        hideUI()
     }
 
     void hideUI() {
