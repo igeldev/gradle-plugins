@@ -19,7 +19,6 @@ package igel.gradle.common
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
-import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -268,80 +267,6 @@ class InputTest {
         inputMissing.properties[getPropertyKey('3')].value = getPropertyValue('3')
 
         inputMissing.assertMissing()
-    }
-
-    Input inputUI
-
-    @Before
-    void initUI() {
-        inputUI = new Input(getInputTitle())
-        inputUI.rootSection {
-            it.section(getSectionName('1'), getSectionDescription('1')) {
-                it.property(getPropertyKey('1.1'), Input.Type.MULTILINE,
-                        getPropertyName('1.1'), getPropertyDescription('1.1'))
-                it.property(getPropertyKey('1.2'), Input.Type.PASSWORD, getPropertyDefault('1.2'),
-                        getPropertyName('1.2'), getPropertyDescription('1.2'))
-            }
-
-            it.section(getSectionName('2'), getSectionDescription('2')) {
-                it.property(getPropertyKey('2.1'), getPropertyDefault('2.1'),
-                        getPropertyName('2.1'), getPropertyDescription('2.1'))
-            }
-
-            it.section(getSectionName('3'), getSectionDescription('3')) {
-                it.property(getPropertyKey('3.1'),
-                        getPropertyName('3.1'), getPropertyDescription('3.1'))
-                it.property(getPropertyKey('3.2'),
-                        getPropertyName('3.2'), getPropertyDescription('3.2'))
-
-                it.section(getSectionName('3.3'), getSectionDescription('3.3')) {
-                    it.property(getPropertyKey('3.3.1'),
-                            getPropertyName('3.3.1'), getPropertyDescription('3.3.1'))
-                    it.property(getPropertyKey('3.3.2'),
-                            getPropertyName('3.3.2'), getPropertyDescription('3.3.2'))
-                }
-            }
-            it.property(getPropertyKey('4'),
-                    getPropertyName('4'), getPropertyDescription('4'))
-            it.property(getPropertyKey('5'),
-                    getPropertyName('5'), getPropertyDescription('5'))
-        }
-    }
-
-    @After
-    void hideUI() {
-        inputUI.hideUI()
-    }
-
-    @Test
-    void uiVisible() {
-        Assert.assertFalse(inputUI.visible)
-        inputUI.showUI()
-        Assert.assertTrue(inputUI.visible)
-        inputUI.hideUI()
-    }
-
-    @Test
-    void uiJoin() {
-        List<String> messages = []
-
-        Thread.start {
-            Thread.sleep(1000)
-            messages << 'hideUI'
-            inputUI.hideUI()
-        }
-
-        messages << 'showUI'
-        inputUI.showUI()
-
-        messages << 'joinUI'
-        inputUI.joinUI()
-
-        messages << 'done'
-
-        Assert.assertEquals([
-                'showUI', 'joinUI', 'hideUI', 'done'
-        ], messages)
     }
 
 }
