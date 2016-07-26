@@ -27,6 +27,7 @@ import java.awt.event.WindowEvent
 class InputDialog extends JDialog {
 
     private final Object lock = new Object()
+    private boolean interrupted = false
 
     private JPanel contentPane
     private Map<String, JTextComponent> propertyFieldMap = [:]
@@ -159,6 +160,20 @@ class InputDialog extends JDialog {
                 JComponent.WHEN_IN_FOCUSED_WINDOW)
     }
 
+    private void onPressedOK() {
+        // todo save input values here
+        hideUI()
+    }
+
+    private void onPressedInterrupt() {
+        interrupted = true
+        hideUI()
+    }
+
+    boolean isInterrupted() {
+        return interrupted
+    }
+
     void showUI() {
         // set dialog size
         Dimension preferredSize = this.preferredSize
@@ -171,16 +186,9 @@ class InputDialog extends JDialog {
         this.alwaysOnTop = true
         this.locationRelativeTo = null
         this.visible = true
-    }
 
-    void onPressedOK() {
-        // todo save input values here
-        hideUI()
-    }
-
-    void onPressedInterrupt() {
-        // todo fail build
-        hideUI()
+        // reset interrupt status
+        interrupted = false
     }
 
     void hideUI() {
