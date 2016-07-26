@@ -18,6 +18,7 @@ package igel.gradle.common
 
 import javax.swing.*
 import javax.swing.border.TitledBorder
+import javax.swing.event.DocumentListener
 import javax.swing.text.JTextComponent
 import java.awt.*
 import java.awt.event.KeyEvent
@@ -29,7 +30,9 @@ class InputDialog extends JDialog {
     private final Object lock = new Object()
     private boolean interrupted = false
 
+    private final Input input
     private JPanel contentPane
+    private Map<String, Boolean> propertyUpdatedMap = [:]
     private Map<String, JTextComponent> propertyFieldMap = [:]
     private JButton buttonOK
     private JButton buttonInterrupt
@@ -85,6 +88,10 @@ class InputDialog extends JDialog {
             fieldComponent.toolTipText = nestedProperty.description
             propertyFieldMap[nestedProperty.key] = fieldComponent
 
+            fieldComponent.getDocument().addDocumentListener({
+                propertyUpdatedMap[nestedProperty.key] = true
+            } as DocumentListener)
+
             sectionPane.add(fieldContainer, new GridBagConstraints(
                     gridwidth: GridBagConstraints.REMAINDER, weightx: 1,
                     fill: GridBagConstraints.HORIZONTAL,
@@ -133,6 +140,7 @@ class InputDialog extends JDialog {
     }
 
     InputDialog(Input input) {
+        this.input = input
         this.title = input.title
 
         setup(input)
@@ -161,7 +169,12 @@ class InputDialog extends JDialog {
     }
 
     private void onPressedOK() {
-        // todo save input values here
+        propertyFieldMap.each { Map.Entry<String, JTextComponent> entry ->
+            if (propertyUpdatedMap[entry.key]) {
+                input.properties[entry.key].value = entry.value.text
+            }
+        }
+
         hideUI()
     }
 
@@ -187,7 +200,8 @@ class InputDialog extends JDialog {
         this.locationRelativeTo = null
         this.visible = true
 
-        // reset interrupt status
+        // reset updated and interrupt status
+        propertyUpdatedMap.each { it.value = false }
         interrupted = false
     }
 
