@@ -42,6 +42,12 @@ class InputTest {
     static String getPropertyDescription(String id) { "Property #$id description" }
 
     @Test
+    void title() {
+        Input input = new Input(getInputTitle())
+        Assert.assertEquals(getInputTitle(), input.title)
+    }
+
+    @Test
     void contentNothing1() {
         Input input = new Input()
 
