@@ -166,6 +166,13 @@ class Input {
         return properties
     }
 
+    Map<String, String> getValues() {
+        return properties.collectEntries {
+            String key, Property property ->
+                [key, property.value ?: property.defaultValue]
+        } as Map<String, String>
+    }
+
     Section getRootSection() {
         return rootSection
     }
