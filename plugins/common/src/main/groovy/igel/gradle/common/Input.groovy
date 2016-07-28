@@ -232,26 +232,23 @@ class Input {
 
     private InputDialog dialog = null
 
-    boolean isVisible() {
-        return dialog != null && dialog.visible
-    }
-
-    void showUI() {
-        if (!isVisible()) {
+    void loadFromUI() throws GradleException {
+        if (dialog != null && dialog.visible) {
+            // UI is already visible
+        } else {
             dialog = new InputDialog(this)
             dialog.showUI()
-        }
-    }
 
-    void hideUI() {
-        if (isVisible()) {
-            dialog.hideUI()
-        }
-    }
-
-    void joinUI() throws InterruptedException {
-        if (isVisible()) {
-            dialog.joinUI()
+            try {
+                dialog.joinUI()
+                if (dialog.interrupted) {
+                    throw new GradleException('Interrupted by user.')
+                }
+            } catch (InterruptedException ignored) {
+                dialog.hideUI()
+            } finally {
+                dialog = null
+            }
         }
     }
 
