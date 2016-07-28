@@ -191,7 +191,7 @@ class InputDialog extends JDialog {
         // set dialog size
         Dimension preferredSize = this.preferredSize
         preferredSize.width = Math.max(300, preferredSize.width)
-        preferredSize.height = Math.max(400, preferredSize.height)
+        preferredSize.height = Math.max(200, preferredSize.height)
         this.size = preferredSize
         this.minimumSize = new Dimension(300, 200)
 
