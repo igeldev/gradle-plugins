@@ -165,13 +165,17 @@ class InputTest {
             }
             it.property(getPropertyKey('2'),
                     getPropertyName('2'), getPropertyDescription('2'))
-            it.property(getPropertyKey('3'),
+            it.property(getPropertyKey('3'), getPropertyDefault('3'),
                     getPropertyName('3'), getPropertyDescription('3'))
         }
 
         Assert.assertNull(inputLoad.properties[getPropertyKey('1')].value)
         Assert.assertNull(inputLoad.properties[getPropertyKey('2')].value)
         Assert.assertNull(inputLoad.properties[getPropertyKey('3')].value)
+
+        Assert.assertNull(inputLoad.values[getPropertyKey('1')])
+        Assert.assertNull(inputLoad.values[getPropertyKey('2')])
+        Assert.assertEquals(getPropertyDefault('3'), inputLoad.values[getPropertyKey('3')])
     }
 
     @Test
@@ -185,6 +189,10 @@ class InputTest {
         Assert.assertEquals(getPropertyValue('1'), inputLoad.properties[getPropertyKey('1')].value)
         Assert.assertEquals('2', inputLoad.properties[getPropertyKey('2')].value)
         Assert.assertNull(inputLoad.properties[getPropertyKey('3')].value)
+
+        Assert.assertEquals(getPropertyValue('1'), inputLoad.values[getPropertyKey('1')])
+        Assert.assertEquals('2', inputLoad.values[getPropertyKey('2')])
+        Assert.assertEquals(getPropertyDefault('3'), inputLoad.values[getPropertyKey('3')])
     }
 
     @Test
@@ -198,6 +206,10 @@ class InputTest {
         Assert.assertEquals(getPropertyValue('1'), inputLoad.properties[getPropertyKey('1')].value)
         Assert.assertEquals('2', inputLoad.properties[getPropertyKey('2')].value)
         Assert.assertNull(inputLoad.properties[getPropertyKey('3')].value)
+
+        Assert.assertEquals(getPropertyValue('1'), inputLoad.values[getPropertyKey('1')])
+        Assert.assertEquals('2', inputLoad.values[getPropertyKey('2')])
+        Assert.assertEquals(getPropertyDefault('3'), inputLoad.values[getPropertyKey('3')])
     }
 
     @Test
@@ -209,6 +221,11 @@ class InputTest {
 
         Assert.assertEquals(getPropertyValue('1'), inputLoad.properties[getPropertyKey('1')].value)
         Assert.assertNull(inputLoad.properties[getPropertyKey('2')].value)
+        Assert.assertNull(inputLoad.properties[getPropertyKey('3')].value)
+
+        Assert.assertEquals(getPropertyValue('1'), inputLoad.values[getPropertyKey('1')])
+        Assert.assertNull(inputLoad.values[getPropertyKey('2')])
+        Assert.assertEquals(getPropertyDefault('3'), inputLoad.values[getPropertyKey('3')])
     }
 
     @Test
@@ -216,12 +233,18 @@ class InputTest {
         Properties properties = new Properties()
         properties.setProperty(getPropertyKey('0'), getPropertyValue('0'))
         properties.setProperty(getPropertyKey('1'), getPropertyValue('1'))
+        properties.setProperty(getPropertyKey('3'), getPropertyValue('3'))
         File propertiesFile = File.createTempFile('input-load-test-', '.properties')
         propertiesFile.withOutputStream { properties.store(it, '') }
         inputLoad.load(propertiesFile)
 
         Assert.assertEquals(getPropertyValue('1'), inputLoad.properties[getPropertyKey('1')].value)
         Assert.assertNull(inputLoad.properties[getPropertyKey('2')].value)
+        Assert.assertEquals(getPropertyValue('3'), inputLoad.properties[getPropertyKey('3')].value)
+
+        Assert.assertEquals(getPropertyValue('1'), inputLoad.values[getPropertyKey('1')])
+        Assert.assertNull(inputLoad.values[getPropertyKey('2')])
+        Assert.assertEquals(getPropertyValue('3'), inputLoad.values[getPropertyKey('3')])
     }
 
     Input inputMissing
