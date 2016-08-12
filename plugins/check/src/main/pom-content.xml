@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <name>Gradle Check plug-ins</name>
+    <description>Gradle plug-ins to check source code.</description>
+    <url>https://github.com/igeldev/gradle-plugins</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/igeldev/gradle-plugins</url>
+        <connection>scm:git@github.com:igeldev/gradle-plugins.git</connection>
+        <developerConnection>scm:git@github.com:igeldev/gradle-plugins.git</developerConnection>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/igeldev/gradle-plugins/issues</url>
+    </issueManagement>
+
+    <developers>
+        <developer>
+            <id>stefan</id>
+            <name>Pavel Stepanov</name>
+            <url>https://github.com/stefan-nsk</url>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+</project>
