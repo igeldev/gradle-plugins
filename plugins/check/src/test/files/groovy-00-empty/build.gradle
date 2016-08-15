@@ -1,0 +1,12 @@
+plugins {
+    id 'igel.check.groovy'
+}
+
+apply plugin: 'groovy'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+}
