@@ -1,0 +1,14 @@
+plugins {
+    id 'igel.check.groovy'
+}
+
+apply plugin: 'groovy'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.6'
+    compile 'com.google.code.gson:gson:2.6.2'
+}

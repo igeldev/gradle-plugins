@@ -9,4 +9,9 @@ class JavaCheckPluginTest extends BaseCheckPluginTest {
         runPublishTest 'src/test/files/java-00-empty'
     }
 
+    @Test
+    void testJava01Simple() {
+        runPublishTest 'src/test/files/java-01-simple'
+    }
+
 }

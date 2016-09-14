@@ -9,4 +9,9 @@ class AndroidCheckPluginTest extends BaseCheckPluginTest {
         runPublishTest 'src/test/files/android-00-empty'
     }
 
+    @Test
+    void testAndroid01Simple() {
+        runPublishTest 'src/test/files/android-01-simple'
+    }
+
 }
