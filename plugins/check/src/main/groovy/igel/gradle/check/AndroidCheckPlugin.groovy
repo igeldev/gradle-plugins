@@ -16,12 +16,33 @@
 
 package igel.gradle.check
 
+import igel.gradle.check.methods.AbstractCheckMethod
+import igel.gradle.check.methods.Method1
 import org.gradle.api.Project
 
-class AndroidCheckPlugin extends BaseCheckPlugin<BaseCheckPlugin.Extension> {
+class AndroidCheckPlugin extends BaseCheckPlugin<AndroidCheckPlugin, Extension> {
+
+    static class Extension extends BaseCheckPlugin.Extension<AndroidCheckPlugin> {
+
+        String valueAndroid
+
+        Extension(Project project, AndroidCheckPlugin plugin) {
+            super(project, plugin)
+        }
+
+    }
+
+    AndroidCheckPlugin() {
+        super(Extension.class)
+    }
 
     @Override
-    void apply(Project target) {
+    protected Set<AbstractCheckMethod> createCheckMethods(Project project) {
+        return [new Method1(project)]
+    }
+
+    @Override
+    protected void doApply(Project project) {
     }
 
 }

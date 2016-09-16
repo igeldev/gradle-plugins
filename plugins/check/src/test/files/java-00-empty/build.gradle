@@ -10,3 +10,19 @@ repositories {
 
 dependencies {
 }
+
+check {
+    valueCommon = 'value common'
+    valueJava = 'value java'
+
+    methods {
+        method1 {
+            valueCommon = 'method1 value common'
+            value1 = 'method1 value 1'
+        }
+        method2 {
+            valueCommon = 'method2 value common'
+            value2 = 'method2 value 2'
+        }
+    }
+}

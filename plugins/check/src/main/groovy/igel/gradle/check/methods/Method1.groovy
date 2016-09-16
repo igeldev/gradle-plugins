@@ -14,35 +14,29 @@
  * limitations under the License.
  */
 
-package igel.gradle.check
+package igel.gradle.check.methods
 
-import igel.gradle.check.methods.AbstractCheckMethod
-import igel.gradle.check.methods.Method2
 import org.gradle.api.Project
 
-class GroovyCheckPlugin extends BaseCheckPlugin<GroovyCheckPlugin, Extension> {
+class Method1 extends AbstractCheckMethod<Extension> {
 
-    static class Extension extends BaseCheckPlugin.Extension<GroovyCheckPlugin> {
+    static class Extension extends AbstractCheckMethod.Extension {
 
-        String valueGroovy
+        String value1
 
-        Extension(Project project, GroovyCheckPlugin plugin) {
-            super(project, plugin)
+        Extension(Project project, String name) {
+            super(project, name)
         }
 
     }
 
-    GroovyCheckPlugin() {
-        super(Extension.class)
+    Method1(Project project) {
+        super(project, 'method1')
     }
 
     @Override
-    protected Set<AbstractCheckMethod> createCheckMethods(Project project) {
-        return [new Method2(project)]
-    }
-
-    @Override
-    protected void doApply(Project project) {
+    Extension createExtension() {
+        return new Extension(project, methodName)
     }
 
 }
