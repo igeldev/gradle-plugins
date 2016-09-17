@@ -9,11 +9,13 @@ import java.nio.file.Files
 
 abstract class BaseCheckPluginTest {
 
-    private static void gradle(File testDir, String task) {
+    private static void gradle(File testDir, String... tasks) {
+        List<String> arguments = ['--stacktrace']
+        arguments += tasks as List<String>
         GradleRunner.create()
                 .withPluginClasspath()
                 .withProjectDir(testDir)
-                .withArguments(['--stacktrace', task])
+                .withArguments(arguments)
                 .forwardOutput()
                 .build()
     }

@@ -27,11 +27,13 @@ abstract class BasePublishPluginTest {
         return stringWriter.toString()
     }
 
-    private static void gradle(File testDir, File repoDir, String task) {
+    private static void gradle(File testDir, File repoDir, String... tasks) {
+        List<String> arguments = ['-Prepo=' + repoDir.absolutePath, '--stacktrace']
+        arguments += tasks as List<String>
         GradleRunner.create()
                 .withPluginClasspath()
                 .withProjectDir(testDir)
-                .withArguments(['-Prepo=' + repoDir.absolutePath, '--stacktrace', task])
+                .withArguments(arguments)
                 .forwardOutput()
                 .build()
     }
