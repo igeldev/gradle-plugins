@@ -13,7 +13,7 @@ abstract class BaseCheckPluginTest {
         GradleRunner.create()
                 .withPluginClasspath()
                 .withProjectDir(testDir)
-                .withArguments([task])
+                .withArguments(['--stacktrace', task])
                 .forwardOutput()
                 .build()
     }

@@ -31,7 +31,7 @@ abstract class BasePublishPluginTest {
         GradleRunner.create()
                 .withPluginClasspath()
                 .withProjectDir(testDir)
-                .withArguments(['-Prepo=' + repoDir.absolutePath, task])
+                .withArguments(['-Prepo=' + repoDir.absolutePath, '--stacktrace', task])
                 .forwardOutput()
                 .build()
     }
