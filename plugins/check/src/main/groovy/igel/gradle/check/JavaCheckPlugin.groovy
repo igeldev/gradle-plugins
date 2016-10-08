@@ -23,6 +23,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.tasks.compile.JavaCompile
 
 class JavaCheckPlugin extends BaseCheckPlugin<JavaCheckPlugin, Extension> {
 
@@ -87,6 +88,64 @@ class JavaCheckPlugin extends BaseCheckPlugin<JavaCheckPlugin, Extension> {
         }
     }
 
+    private Configuration configurationFindBugs
+
+    private void prepareFindBugs(Project project) {
+        configurationFindBugs = project.configurations.create('checkFindBugs')
+        configurationFindBugs.description = 'FindBugs dependencies.'
+        configurationFindBugs.visible = false
+
+        configurationFindBugs.defaultDependencies { dependencies ->
+            dependencies.add(project.dependencies.create('com.google.code.findbugs:findbugs:3.0.1'))
+        }
+    }
+
+    private List<Task> getDepsFindBugs(Project project) {
+        JavaCompile javaCompileTask = project.tasks.find { it instanceof JavaCompile } as JavaCompile
+        return [javaCompileTask]
+    }
+
+    private void performFindBugs(Project project) {
+        project.ant.taskdef(name: 'findbugs', classname: 'edu.umd.cs.findbugs.anttask.FindBugsTask') {
+            classpath {
+                configurationFindBugs.resolve().each {
+                    pathelement(location: it.absolutePath)
+                }
+            }
+        }
+
+        JavaCompile javaCompileTask = project.tasks.find { it instanceof JavaCompile } as JavaCompile
+        File configFile = copyResource(project, 'configFindBugs/config.xml',
+                project.file('build/check/findbugs/config.xml'))
+        SourceDirectorySet sources = project.sourceSets.main.java
+        if (sources.findAll { it.exists() }.empty) {
+            return
+        }
+        project.ant.findbugs(
+                effort: 'max',
+                reportLevel: 'low',
+                excludeFilter: configFile,
+                output: 'xml:withMessages',
+                outputFile: project.file('build/check/findbugs/report.xml')) {
+            classpath {
+                configurationFindBugs.resolve().each {
+                    pathelement(location: it.absolutePath)
+                }
+            }
+            fileset(dir: javaCompileTask.destinationDir)
+            sourcePath {
+                sources.getSrcDirs().each {
+                    pathelement(location: it.absolutePath)
+                }
+            }
+            auxClasspath {
+                javaCompileTask.classpath.each {
+                    pathelement(location: it.absolutePath)
+                }
+            }
+        }
+    }
+
     @Override
     protected void doApply(Project project) {
         Task checkTestTask = project.task('check-test')
@@ -95,6 +154,11 @@ class JavaCheckPlugin extends BaseCheckPlugin<JavaCheckPlugin, Extension> {
         // Checkstyle
         prepareCheckstyle(project)
         checkTestTask << { performCheckstyle(project) }
+
+        // FindBugs
+        prepareFindBugs(project)
+        project.afterEvaluate { checkTestTask.dependsOn(getDepsFindBugs(project)) }
+        checkTestTask << { performFindBugs(project) }
     }
 
 }
