@@ -146,6 +146,41 @@ class JavaCheckPlugin extends BaseCheckPlugin<JavaCheckPlugin, Extension> {
         }
     }
 
+    private Configuration configurationPMD
+
+    private void preparePMD(Project project) {
+        configurationPMD = project.configurations.create('checkPMD')
+        configurationPMD.description = 'PMD dependencies.'
+        configurationPMD.visible = false
+
+        configurationPMD.defaultDependencies { dependencies ->
+            dependencies.add(project.dependencies.create('net.sourceforge.pmd:pmd-java:5.5.1'))
+        }
+    }
+
+    private void performPMD(Project project) {
+        project.ant.taskdef(name: 'pmd', classname: 'net.sourceforge.pmd.ant.PMDTask') {
+            classpath {
+                configurationPMD.resolve().each {
+                    pathelement(location: it.absolutePath)
+                }
+            }
+        }
+
+        File configFile = copyResource(project, 'configPMD/config.xml',
+                project.file('build/check/pmd/config.xml'))
+        SourceDirectorySet sources = project.sourceSets.main.java
+        if (sources.findAll { it.exists() }.empty) {
+            return
+        }
+        project.ant.pmd(
+                rulesetfiles: configFile,
+                failonerror: true) {
+            formatter(type: 'xml', toFile: project.file('build/check/pmd/report.xml'))
+            sources.getSrcDirs().each { fileset(dir: it.absolutePath) }
+        }
+    }
+
     @Override
     protected void doApply(Project project) {
         Task checkTestTask = project.task('check-test')
@@ -159,6 +194,10 @@ class JavaCheckPlugin extends BaseCheckPlugin<JavaCheckPlugin, Extension> {
         prepareFindBugs(project)
         project.afterEvaluate { checkTestTask.dependsOn(getDepsFindBugs(project)) }
         checkTestTask << { performFindBugs(project) }
+
+        // PMD
+        preparePMD(project)
+        checkTestTask << { performPMD(project) }
     }
 
 }
