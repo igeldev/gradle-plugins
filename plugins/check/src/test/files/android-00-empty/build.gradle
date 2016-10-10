@@ -23,15 +23,3 @@ repositories {
 
 dependencies {
 }
-
-check {
-    valueCommon = 'value common'
-    valueAndroid = 'value android'
-
-    methods {
-        method1 {
-            valueCommon = 'method1 value common'
-            value1 = 'method1 value 1'
-        }
-    }
-}
