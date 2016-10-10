@@ -18,29 +18,29 @@ package igel.gradle.check.methods
 
 import org.gradle.api.Project
 
-abstract class AbstractCheckMethod<E extends Extension> {
+abstract class BaseCheckMethod<E extends Extension> {
 
-    static class Extension {
+    static class Extension<M extends BaseCheckMethod> {
 
-        final Project project
-        final String name
+        final M method
         String valueCommon
 
-        Extension(Project project, String name) {
-            this.project = project
-            this.name = name
+        Extension(M method) {
+            this.method = method
         }
 
     }
 
     final Project project
-    final String methodName
+    final String name
+    final E extension
 
-    abstract E createExtension()
+    protected abstract E createExtension()
 
-    AbstractCheckMethod(Project project, String methodName) {
+    BaseCheckMethod(Project project, String name) {
         this.project = project
-        this.methodName = methodName
+        this.name = name
+        this.extension = createExtension()
     }
 
 }

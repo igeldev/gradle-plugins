@@ -18,14 +18,14 @@ package igel.gradle.check.methods
 
 import org.gradle.api.Project
 
-class Method1 extends AbstractCheckMethod<Extension> {
+class Method1 extends BaseCheckMethod<Extension> {
 
-    static class Extension extends AbstractCheckMethod.Extension {
+    static class Extension extends BaseCheckMethod.Extension<Method1> {
 
         String value1
 
-        Extension(Project project, String name) {
-            super(project, name)
+        Extension(Method1 method) {
+            super(method)
         }
 
     }
@@ -36,7 +36,7 @@ class Method1 extends AbstractCheckMethod<Extension> {
 
     @Override
     Extension createExtension() {
-        return new Extension(project, methodName)
+        return new Extension(this)
     }
 
 }

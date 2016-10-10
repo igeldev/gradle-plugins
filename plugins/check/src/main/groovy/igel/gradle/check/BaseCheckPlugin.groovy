@@ -16,7 +16,7 @@
 
 package igel.gradle.check
 
-import igel.gradle.check.methods.AbstractCheckMethod
+import igel.gradle.check.methods.BaseCheckMethod
 import org.gradle.api.*
 
 abstract class BaseCheckPlugin<P extends BaseCheckPlugin, E extends Extension> implements Plugin<Project> {
@@ -25,27 +25,27 @@ abstract class BaseCheckPlugin<P extends BaseCheckPlugin, E extends Extension> i
 
         private final Project project
         private final P plugin
-        private final Map<String, AbstractCheckMethod> checkMethodMap
-        final NamedDomainObjectCollection<AbstractCheckMethod.Extension> methods
+        private final Map<String, BaseCheckMethod> checkMethodMap
+        final NamedDomainObjectCollection<BaseCheckMethod.Extension> methods
         String valueCommon
 
         Extension(Project project, P plugin) {
             this.project = project
             this.plugin = plugin
 
-            Map<String, AbstractCheckMethod> checkMethodMap = Collections.unmodifiableMap(
-                    plugin.createCheckMethods(project).collectEntries { [it.methodName, it] })
-            this.checkMethodMap = checkMethodMap
+            Map<String, BaseCheckMethod> checkMethodMapAlias = Collections.unmodifiableMap(
+                    plugin.createCheckMethods(project).collectEntries { [it.name, it] })
+            this.checkMethodMap = checkMethodMapAlias
 
-            this.methods = project.container(AbstractCheckMethod.Extension.class) { String name ->
-                if (!checkMethodMap.containsKey(name)) {
+            this.methods = project.container(BaseCheckMethod.Extension.class) { String name ->
+                if (!checkMethodMapAlias.containsKey(name)) {
                     throw new GradleException("Unknown check method '$name'.")
                 }
-                return checkMethodMap[name].createExtension()
+                return checkMethodMapAlias[name].extension
             }
         }
 
-        void methods(Action<NamedDomainObjectCollection<AbstractCheckMethod.Extension>> action) {
+        void methods(Action<NamedDomainObjectCollection<BaseCheckMethod.Extension>> action) {
             action.execute(methods)
         }
 
@@ -57,7 +57,7 @@ abstract class BaseCheckPlugin<P extends BaseCheckPlugin, E extends Extension> i
         this.extensionClass = extensionClass
     }
 
-    protected abstract Set<AbstractCheckMethod> createCheckMethods(Project project)
+    protected abstract Set<BaseCheckMethod> createCheckMethods(Project project)
 
     protected abstract void doApply(Project project)
 
