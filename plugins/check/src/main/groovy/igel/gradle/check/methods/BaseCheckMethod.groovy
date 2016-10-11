@@ -17,16 +17,40 @@
 package igel.gradle.check.methods
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 
 abstract class BaseCheckMethod<E extends Extension> {
 
     static class Extension<M extends BaseCheckMethod> {
 
         final M method
-        String valueCommon
+        private final String defaultDependencyGroup
+        private final String defaultDependencyModule
+        private final String defaultDependencyVersion
+        private String dependency
 
-        Extension(M method) {
+        Extension(M method,
+                  String defaultDependencyGroup, String defaultDependencyModule, String defaultDependencyVersion) {
             this.method = method
+            this.defaultDependencyGroup = defaultDependencyGroup
+            this.defaultDependencyModule = defaultDependencyModule
+            this.defaultDependencyVersion = defaultDependencyVersion
+            this.dependency = null
+        }
+
+        void version(String version) {
+            dependency("$defaultDependencyGroup:$defaultDependencyModule:$version")
+        }
+
+        void dependency(String dependency) {
+            if (dependency) {
+                throw new IllegalStateException("Dependency of $method.name is already set as '$dependency'")
+            }
+            this.dependency = dependency
+        }
+
+        String getDependency() {
+            return dependency ?: "$defaultDependencyGroup:$defaultDependencyModule:$defaultDependencyVersion"
         }
 
     }
@@ -34,13 +58,30 @@ abstract class BaseCheckMethod<E extends Extension> {
     final Project project
     final String name
     final E extension
-
-    protected abstract E createExtension()
+    private Configuration configuration
 
     BaseCheckMethod(Project project, String name) {
         this.project = project
         this.name = name
         this.extension = createExtension()
+    }
+
+    protected abstract E createExtension()
+
+    void prepareDependency() {
+        configuration = project.configurations.create("___igel_check_${name}___")
+        configuration.description = 'Checkstyle dependencies.'
+        configuration.visible = false
+
+        Project projectAlias = project
+        Extension extensionAlias = extension
+        configuration.defaultDependencies { dependencies ->
+            dependencies.add(projectAlias.dependencies.create(extensionAlias.dependency))
+        }
+    }
+
+    Set<File> resolveDependency() {
+        return configuration.resolve()
     }
 
 }
