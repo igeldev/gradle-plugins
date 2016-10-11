@@ -17,9 +17,11 @@
 package igel.gradle.check
 
 import igel.gradle.check.methods.BaseCheckMethod
+import igel.gradle.check.methods.MethodCheckstyle
+import igel.gradle.check.methods.MethodFindBugs
+import igel.gradle.check.methods.MethodPMD
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.compile.JavaCompile
 
@@ -53,22 +55,12 @@ class JavaCheckPlugin extends BaseCheckPlugin<JavaCheckPlugin, Extension> {
         return outputFile
     }
 
-    private Configuration configurationCheckstyle
-
-    private void prepareCheckstyle(Project project) {
-        configurationCheckstyle = project.configurations.create('checkCheckstyle')
-        configurationCheckstyle.description = 'Checkstyle dependencies.'
-        configurationCheckstyle.visible = false
-
-        configurationCheckstyle.defaultDependencies { dependencies ->
-            dependencies.add(project.dependencies.create('com.puppycrawl.tools:checkstyle:6.19'))
-        }
-    }
+    private MethodCheckstyle methodCheckstyle
 
     private void performCheckstyle(Project project) {
         project.ant.taskdef(resource: 'com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties') {
             classpath {
-                configurationCheckstyle.resolve().each {
+                methodCheckstyle.resolveDependency().each {
                     pathelement(location: it.absolutePath)
                 }
             }
@@ -86,17 +78,7 @@ class JavaCheckPlugin extends BaseCheckPlugin<JavaCheckPlugin, Extension> {
         }
     }
 
-    private Configuration configurationFindBugs
-
-    private void prepareFindBugs(Project project) {
-        configurationFindBugs = project.configurations.create('checkFindBugs')
-        configurationFindBugs.description = 'FindBugs dependencies.'
-        configurationFindBugs.visible = false
-
-        configurationFindBugs.defaultDependencies { dependencies ->
-            dependencies.add(project.dependencies.create('com.google.code.findbugs:findbugs:3.0.1'))
-        }
-    }
+    private MethodFindBugs methodFindBugs
 
     private List<Task> getDepsFindBugs(Project project) {
         JavaCompile javaCompileTask = project.tasks.find { it instanceof JavaCompile } as JavaCompile
@@ -106,7 +88,7 @@ class JavaCheckPlugin extends BaseCheckPlugin<JavaCheckPlugin, Extension> {
     private void performFindBugs(Project project) {
         project.ant.taskdef(name: 'findbugs', classname: 'edu.umd.cs.findbugs.anttask.FindBugsTask') {
             classpath {
-                configurationFindBugs.resolve().each {
+                methodFindBugs.resolveDependency().each {
                     pathelement(location: it.absolutePath)
                 }
             }
@@ -126,7 +108,7 @@ class JavaCheckPlugin extends BaseCheckPlugin<JavaCheckPlugin, Extension> {
                 output: 'xml:withMessages',
                 outputFile: project.file('build/check/findbugs/report.xml')) {
             classpath {
-                configurationFindBugs.resolve().each {
+                methodFindBugs.resolveDependency().each {
                     pathelement(location: it.absolutePath)
                 }
             }
@@ -144,22 +126,12 @@ class JavaCheckPlugin extends BaseCheckPlugin<JavaCheckPlugin, Extension> {
         }
     }
 
-    private Configuration configurationPMD
-
-    private void preparePMD(Project project) {
-        configurationPMD = project.configurations.create('checkPMD')
-        configurationPMD.description = 'PMD dependencies.'
-        configurationPMD.visible = false
-
-        configurationPMD.defaultDependencies { dependencies ->
-            dependencies.add(project.dependencies.create('net.sourceforge.pmd:pmd-java:5.5.1'))
-        }
-    }
+    private MethodPMD methodPMD
 
     private void performPMD(Project project) {
         project.ant.taskdef(name: 'pmd', classname: 'net.sourceforge.pmd.ant.PMDTask') {
             classpath {
-                configurationPMD.resolve().each {
+                methodPMD.resolveDependency().each {
                     pathelement(location: it.absolutePath)
                 }
             }
@@ -185,16 +157,19 @@ class JavaCheckPlugin extends BaseCheckPlugin<JavaCheckPlugin, Extension> {
         project.afterEvaluate { project.tasks['check'].dependsOn checkTestTask }
 
         // Checkstyle
-        prepareCheckstyle(project)
+        methodCheckstyle = new MethodCheckstyle(project)
+        methodCheckstyle.prepareDependency()
         checkTestTask << { performCheckstyle(project) }
 
         // FindBugs
-        prepareFindBugs(project)
+        methodFindBugs = new MethodFindBugs(project)
+        methodFindBugs.prepareDependency()
         project.afterEvaluate { checkTestTask.dependsOn(getDepsFindBugs(project)) }
         checkTestTask << { performFindBugs(project) }
 
         // PMD
-        preparePMD(project)
+        methodPMD = new MethodPMD(project)
+        methodPMD.prepareDependency()
         checkTestTask << { performPMD(project) }
     }
 
