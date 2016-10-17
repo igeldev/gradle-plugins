@@ -17,6 +17,7 @@
 package igel.gradle.check.methods
 
 import org.gradle.api.Project
+import org.gradle.api.tasks.compile.JavaCompile
 
 class MethodFindBugs extends BaseCheckMethod<Extension> {
 
@@ -36,6 +37,47 @@ class MethodFindBugs extends BaseCheckMethod<Extension> {
     @Override
     protected Extension createExtension() {
         return new Extension(this)
+    }
+
+    @Override
+    void performCheck(Set<File> sources, JavaCompile javaCompileTask, File config, File xmlOutput) {
+        if (sources.findAll { it.exists() }.empty) {
+            return
+        }
+
+        project.ant.taskdef(name: 'findbugs', classname: 'edu.umd.cs.findbugs.anttask.FindBugsTask') {
+            classpath {
+                resolveDependency().each {
+                    pathelement(location: it.absolutePath)
+                }
+            }
+        }
+
+        project.ant.findbugs(
+                effort: 'max',
+                reportLevel: 'low',
+                excludeFilter: config,
+                output: 'xml:withMessages',
+                outputFile: xmlOutput) {
+            classpath {
+                resolveDependency().each {
+                    pathelement(location: it.absolutePath)
+                }
+            }
+            fileset(dir: javaCompileTask.destinationDir)
+            sourcePath {
+                sources.each {
+                    if (it.exists()) {
+                        pathelement(location: it.absolutePath)
+                    }
+                }
+            }
+            auxClasspath {
+                javaCompileTask.classpath.each {
+                    pathelement(location: it.absolutePath)
+                }
+            }
+        }
     }
 
 }

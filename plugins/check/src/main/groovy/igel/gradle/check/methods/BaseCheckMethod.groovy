@@ -18,6 +18,7 @@ package igel.gradle.check.methods
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.tasks.compile.JavaCompile
 
 abstract class BaseCheckMethod<E extends Extension> {
 
@@ -83,5 +84,7 @@ abstract class BaseCheckMethod<E extends Extension> {
     Set<File> resolveDependency() {
         return configuration.resolve()
     }
+
+    abstract void performCheck(Set<File> sources, JavaCompile javaCompileTask, File config, File xmlOutput)
 
 }

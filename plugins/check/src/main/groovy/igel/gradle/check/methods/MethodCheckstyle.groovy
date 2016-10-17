@@ -17,6 +17,7 @@
 package igel.gradle.check.methods
 
 import org.gradle.api.Project
+import org.gradle.api.tasks.compile.JavaCompile
 
 class MethodCheckstyle extends BaseCheckMethod<Extension> {
 
@@ -36,6 +37,30 @@ class MethodCheckstyle extends BaseCheckMethod<Extension> {
     @Override
     protected Extension createExtension() {
         return new Extension(this)
+    }
+
+    @Override
+    void performCheck(Set<File> sources, JavaCompile javaCompileTask, File config, File xmlOutput) {
+        if (sources.findAll { it.exists() }.empty) {
+            return
+        }
+
+        project.ant.taskdef(resource: 'com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties') {
+            classpath {
+                resolveDependency().each {
+                    pathelement(location: it.absolutePath)
+                }
+            }
+        }
+
+        project.ant.checkstyle(config: config, failOnViolation: false) {
+            formatter(type: 'xml', toFile: xmlOutput)
+            sources.each {
+                if (it.exists()) {
+                    fileset(dir: it.absolutePath)
+                }
+            }
+        }
     }
 
 }

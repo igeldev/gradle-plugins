@@ -71,105 +71,34 @@ class AndroidCheckPlugin extends BaseCheckPlugin<AndroidCheckPlugin, Extension> 
     private MethodCheckstyle methodCheckstyle
 
     private void performCheckstyle(Project project) {
-        Set<File> sources = getJavaSources(project)
-        if (sources.findAll { it.exists() }.empty) {
-            return
-        }
-
-        project.ant.taskdef(resource: 'com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties') {
-            classpath {
-                methodCheckstyle.resolveDependency().each {
-                    pathelement(location: it.absolutePath)
-                }
-            }
-        }
-
-        File configFile = copyResource(project, 'configCheckstyle/config.xml',
-                project.file('build/check/checkstyle/config.xml'))
-        project.ant.checkstyle(config: configFile, failOnViolation: false) {
-            formatter(type: 'xml', toFile: project.file('build/check/checkstyle/report.xml'))
-            sources.each {
-                if (it.exists()) {
-                    fileset(dir: it.absolutePath)
-                }
-            }
-        }
+        methodCheckstyle.performCheck(
+                getJavaSources(project),
+                getJavaCompileTask(project),
+                copyResource(project, 'configCheckstyle/config.xml',
+                        project.file('build/check/checkstyle/config.xml')),
+                project.file('build/check/checkstyle/report.xml'))
     }
 
     private MethodFindBugs methodFindBugs
 
     private void performFindBugs(Project project) {
-        Set<File> sources = getJavaSources(project)
-        if (sources.findAll { it.exists() }.empty) {
-            return
-        }
-
-        project.ant.taskdef(name: 'findbugs', classname: 'edu.umd.cs.findbugs.anttask.FindBugsTask') {
-            classpath {
-                methodFindBugs.resolveDependency().each {
-                    pathelement(location: it.absolutePath)
-                }
-            }
-        }
-
-        JavaCompile javaCompileTask = getJavaCompileTask(project)
-        File configFile = copyResource(project, 'configFindBugs/config.xml',
-                project.file('build/check/findbugs/config.xml'))
-        project.ant.findbugs(
-                effort: 'max',
-                reportLevel: 'low',
-                excludeFilter: configFile,
-                output: 'xml:withMessages',
-                outputFile: project.file('build/check/findbugs/report.xml')) {
-            classpath {
-                methodFindBugs.resolveDependency().each {
-                    pathelement(location: it.absolutePath)
-                }
-            }
-            fileset(dir: javaCompileTask.destinationDir)
-            sourcePath {
-                sources.each {
-                    if (it.exists()) {
-                        pathelement(location: it.absolutePath)
-                    }
-                }
-            }
-            auxClasspath {
-                javaCompileTask.classpath.each {
-                    pathelement(location: it.absolutePath)
-                }
-            }
-        }
+        methodFindBugs.performCheck(
+                getJavaSources(project),
+                getJavaCompileTask(project),
+                copyResource(project, 'configFindBugs/config.xml',
+                        project.file('build/check/findbugs/config.xml')),
+                project.file('build/check/findbugs/report.xml'))
     }
 
     private MethodPMD methodPMD
 
     private void performPMD(Project project) {
-        Set<File> sources = getJavaSources(project)
-        if (sources.findAll { it.exists() }.empty) {
-            return
-        }
-
-        project.ant.taskdef(name: 'pmd', classname: 'net.sourceforge.pmd.ant.PMDTask') {
-            classpath {
-                methodPMD.resolveDependency().each {
-                    pathelement(location: it.absolutePath)
-                }
-            }
-        }
-
-        File configFile = copyResource(project, 'configPMD/config.xml',
-                project.file('build/check/pmd/config.xml'))
-        project.ant.pmd(
-                rulesetfiles: configFile,
-                failonerror: true) {
-            formatter(type: 'xml', toFile: project.file('build/check/pmd/report.xml'))
-            sources.each {
-                if (it.exists()) {
-                    fileset(dir: it.absolutePath)
-                }
-            }
-        }
+        methodFindBugs.performCheck(
+                getJavaSources(project),
+                getJavaCompileTask(project),
+                copyResource(project, 'configPMD/config.xml',
+                        project.file('build/check/pmd/config.xml')),
+                project.file('build/check/pmd/report.xml'))
     }
 
     @Override
