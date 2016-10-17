@@ -56,63 +56,32 @@ class AndroidCheckPlugin extends BaseCheckPlugin<AndroidCheckPlugin, Extension> 
 
     @Override
     protected Set<BaseCheckMethod> createCheckMethods(Project project) {
-        return []
+        return [
+                new MethodCheckstyle(project),
+                new MethodFindBugs(project),
+                new MethodPMD(project),
+        ]
     }
-
-    static File copyResource(Project project, String resourcePath, File outputFile) {
-        ClassLoader loader = project.buildscript.classLoader
-
-        outputFile.delete()
-        outputFile.parentFile.mkdirs()
-        outputFile << loader.getResourceAsStream(resourcePath).text
-        return outputFile
-    }
-
-    private MethodCheckstyle methodCheckstyle
-    private MethodFindBugs methodFindBugs
-    private MethodPMD methodPMD
 
     @Override
     protected void doApply(Project project) {
         Task checkTestTask = project.task('check-test')
         project.afterEvaluate { project.tasks['check'].dependsOn checkTestTask }
 
-        // Checkstyle
-        methodCheckstyle = new MethodCheckstyle(project)
-        methodCheckstyle.prepareDependency()
-        checkTestTask << {
-            methodCheckstyle.extension.resolveConfig()
-            methodCheckstyle.performCheck(
-                    getJavaSources(project),
-                    getJavaCompileTask(project),
-                    methodCheckstyle.extension.configFile,
-                    methodCheckstyle.extension.reportFile)
+        methods.each { method ->
+            method.prepareDependency()
+            checkTestTask << {
+                method.extension.resolveConfig()
+                method.performCheck(
+                        getJavaSources(project),
+                        getJavaCompileTask(project),
+                        method.extension.configFile,
+                        method.extension.reportFile)
+            }
         }
 
-        // FindBugs
-        methodFindBugs = new MethodFindBugs(project)
-        methodFindBugs.prepareDependency()
+        // FindBugs requires compiled code
         project.afterEvaluate { checkTestTask.dependsOn(getJavaCompileTask(project)) }
-        checkTestTask << {
-            methodFindBugs.extension.resolveConfig()
-            methodFindBugs.performCheck(
-                    getJavaSources(project),
-                    getJavaCompileTask(project),
-                    methodFindBugs.extension.configFile,
-                    methodFindBugs.extension.reportFile)
-        }
-
-        // PMD
-        methodPMD = new MethodPMD(project)
-        methodPMD.prepareDependency()
-        checkTestTask << {
-            methodPMD.extension.resolveConfig()
-            methodPMD.performCheck(
-                    getJavaSources(project),
-                    getJavaCompileTask(project),
-                    methodPMD.extension.configFile,
-                    methodPMD.extension.reportFile)
-        }
     }
 
 }

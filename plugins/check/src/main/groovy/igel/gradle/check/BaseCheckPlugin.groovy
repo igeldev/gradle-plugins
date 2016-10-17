@@ -35,7 +35,7 @@ abstract class BaseCheckPlugin<P extends BaseCheckPlugin, E extends Extension> i
             this.plugin = plugin
 
             Map<String, BaseCheckMethod> checkMethodMapAlias = Collections.unmodifiableMap(
-                    plugin.createCheckMethods(project).collectEntries { [it.name, it] })
+                    plugin.methods.collectEntries { [it.name, it] })
             this.checkMethodMap = checkMethodMapAlias
 
             this.methods = project.container(BaseCheckMethod.Extension.class) { String name ->
@@ -53,9 +53,14 @@ abstract class BaseCheckPlugin<P extends BaseCheckPlugin, E extends Extension> i
     }
 
     final Class<E> extensionClass
+    private Set<BaseCheckMethod> methods
 
     BaseCheckPlugin(Class<E> extensionClass) {
         this.extensionClass = extensionClass
+    }
+
+    Set<BaseCheckMethod> getMethods() {
+        return methods
     }
 
     abstract Set<File> getJavaSources(Project project)
@@ -68,6 +73,7 @@ abstract class BaseCheckPlugin<P extends BaseCheckPlugin, E extends Extension> i
 
     @Override
     final void apply(Project target) {
+        methods = createCheckMethods(target)
         target.extensions.create('check', extensionClass, target, this)
 
         doApply(target)
