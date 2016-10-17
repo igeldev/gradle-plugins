@@ -69,37 +69,8 @@ class AndroidCheckPlugin extends BaseCheckPlugin<AndroidCheckPlugin, Extension> 
     }
 
     private MethodCheckstyle methodCheckstyle
-
-    private void performCheckstyle(Project project) {
-        methodCheckstyle.performCheck(
-                getJavaSources(project),
-                getJavaCompileTask(project),
-                copyResource(project, 'configCheckstyle/config.xml',
-                        project.file('build/check/checkstyle/config.xml')),
-                project.file('build/check/checkstyle/report.xml'))
-    }
-
     private MethodFindBugs methodFindBugs
-
-    private void performFindBugs(Project project) {
-        methodFindBugs.performCheck(
-                getJavaSources(project),
-                getJavaCompileTask(project),
-                copyResource(project, 'configFindBugs/config.xml',
-                        project.file('build/check/findbugs/config.xml')),
-                project.file('build/check/findbugs/report.xml'))
-    }
-
     private MethodPMD methodPMD
-
-    private void performPMD(Project project) {
-        methodFindBugs.performCheck(
-                getJavaSources(project),
-                getJavaCompileTask(project),
-                copyResource(project, 'configPMD/config.xml',
-                        project.file('build/check/pmd/config.xml')),
-                project.file('build/check/pmd/report.xml'))
-    }
 
     @Override
     protected void doApply(Project project) {
@@ -109,18 +80,39 @@ class AndroidCheckPlugin extends BaseCheckPlugin<AndroidCheckPlugin, Extension> 
         // Checkstyle
         methodCheckstyle = new MethodCheckstyle(project)
         methodCheckstyle.prepareDependency()
-        checkTestTask << { performCheckstyle(project) }
+        checkTestTask << {
+            methodCheckstyle.extension.resolveConfig()
+            methodCheckstyle.performCheck(
+                    getJavaSources(project),
+                    getJavaCompileTask(project),
+                    methodCheckstyle.extension.configFile,
+                    methodCheckstyle.extension.reportFile)
+        }
 
         // FindBugs
         methodFindBugs = new MethodFindBugs(project)
         methodFindBugs.prepareDependency()
         project.afterEvaluate { checkTestTask.dependsOn(getJavaCompileTask(project)) }
-        checkTestTask << { performFindBugs(project) }
+        checkTestTask << {
+            methodFindBugs.extension.resolveConfig()
+            methodFindBugs.performCheck(
+                    getJavaSources(project),
+                    getJavaCompileTask(project),
+                    methodFindBugs.extension.configFile,
+                    methodFindBugs.extension.reportFile)
+        }
 
         // PMD
         methodPMD = new MethodPMD(project)
         methodPMD.prepareDependency()
-        checkTestTask << { performPMD(project) }
+        checkTestTask << {
+            methodPMD.extension.resolveConfig()
+            methodPMD.performCheck(
+                    getJavaSources(project),
+                    getJavaCompileTask(project),
+                    methodPMD.extension.configFile,
+                    methodPMD.extension.reportFile)
+        }
     }
 
 }

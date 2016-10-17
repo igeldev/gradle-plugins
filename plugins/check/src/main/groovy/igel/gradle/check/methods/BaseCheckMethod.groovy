@@ -16,6 +16,7 @@
 
 package igel.gradle.check.methods
 
+import igel.gradle.check.Utils
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.compile.JavaCompile
@@ -25,18 +26,26 @@ abstract class BaseCheckMethod<E extends Extension> {
     static class Extension<M extends BaseCheckMethod> {
 
         final M method
+
         private final String defaultDependencyGroup
         private final String defaultDependencyModule
         private final String defaultDependencyVersion
         private String dependency
 
+        final File configFile
+        final File reportFile
+
         Extension(M method,
                   String defaultDependencyGroup, String defaultDependencyModule, String defaultDependencyVersion) {
             this.method = method
+
             this.defaultDependencyGroup = defaultDependencyGroup
             this.defaultDependencyModule = defaultDependencyModule
             this.defaultDependencyVersion = defaultDependencyVersion
             this.dependency = null
+
+            this.configFile = method.project.file("build/check/$method.name/config.xml")
+            this.reportFile = method.project.file("build/check/$method.name/report.xml")
         }
 
         void version(String version) {
@@ -52,6 +61,10 @@ abstract class BaseCheckMethod<E extends Extension> {
 
         String getDependency() {
             return dependency ?: "$defaultDependencyGroup:$defaultDependencyModule:$defaultDependencyVersion"
+        }
+
+        void resolveConfig() {
+            Utils.copyResource(method.project, "config$method.name/config.xml", configFile)
         }
 
     }
