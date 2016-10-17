@@ -18,6 +18,7 @@ package igel.gradle.check
 
 import igel.gradle.check.methods.BaseCheckMethod
 import org.gradle.api.*
+import org.gradle.api.tasks.compile.JavaCompile
 
 abstract class BaseCheckPlugin<P extends BaseCheckPlugin, E extends Extension> implements Plugin<Project> {
 
@@ -56,6 +57,10 @@ abstract class BaseCheckPlugin<P extends BaseCheckPlugin, E extends Extension> i
     BaseCheckPlugin(Class<E> extensionClass) {
         this.extensionClass = extensionClass
     }
+
+    abstract Set<File> getJavaSources(Project project)
+
+    abstract JavaCompile getJavaCompileTask(Project project)
 
     protected abstract Set<BaseCheckMethod> createCheckMethods(Project project)
 

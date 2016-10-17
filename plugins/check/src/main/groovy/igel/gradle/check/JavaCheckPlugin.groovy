@@ -42,6 +42,17 @@ class JavaCheckPlugin extends BaseCheckPlugin<JavaCheckPlugin, Extension> {
     }
 
     @Override
+    Set<File> getJavaSources(Project project) {
+        SourceDirectorySet sources = project.sourceSets.main.java
+        return sources.srcDirs
+    }
+
+    @Override
+    JavaCompile getJavaCompileTask(Project project) {
+        return project.tasks.find { it instanceof JavaCompile } as JavaCompile
+    }
+
+    @Override
     protected Set<BaseCheckMethod> createCheckMethods(Project project) {
         return []
     }
@@ -58,6 +69,11 @@ class JavaCheckPlugin extends BaseCheckPlugin<JavaCheckPlugin, Extension> {
     private MethodCheckstyle methodCheckstyle
 
     private void performCheckstyle(Project project) {
+        Set<File> sources = getJavaSources(project)
+        if (sources.findAll { it.exists() }.empty) {
+            return
+        }
+
         project.ant.taskdef(resource: 'com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties') {
             classpath {
                 methodCheckstyle.resolveDependency().each {
@@ -68,24 +84,24 @@ class JavaCheckPlugin extends BaseCheckPlugin<JavaCheckPlugin, Extension> {
 
         File configFile = copyResource(project, 'configCheckstyle/config.xml',
                 project.file('build/check/checkstyle/config.xml'))
-        SourceDirectorySet sources = project.sourceSets.main.java
-        if (sources.findAll { it.exists() }.empty) {
-            return
-        }
         project.ant.checkstyle(config: configFile, failOnViolation: false) {
             formatter(type: 'xml', toFile: project.file('build/check/checkstyle/report.xml'))
-            sources.getSrcDirs().each { fileset(dir: it.absolutePath) }
+            sources.each {
+                if (it.exists()) {
+                    fileset(dir: it.absolutePath)
+                }
+            }
         }
     }
 
     private MethodFindBugs methodFindBugs
 
-    private List<Task> getDepsFindBugs(Project project) {
-        JavaCompile javaCompileTask = project.tasks.find { it instanceof JavaCompile } as JavaCompile
-        return [javaCompileTask]
-    }
-
     private void performFindBugs(Project project) {
+        Set<File> sources = getJavaSources(project)
+        if (sources.findAll { it.exists() }.empty) {
+            return
+        }
+
         project.ant.taskdef(name: 'findbugs', classname: 'edu.umd.cs.findbugs.anttask.FindBugsTask') {
             classpath {
                 methodFindBugs.resolveDependency().each {
@@ -94,13 +110,9 @@ class JavaCheckPlugin extends BaseCheckPlugin<JavaCheckPlugin, Extension> {
             }
         }
 
-        JavaCompile javaCompileTask = project.tasks.find { it instanceof JavaCompile } as JavaCompile
+        JavaCompile javaCompileTask = getJavaCompileTask(project)
         File configFile = copyResource(project, 'configFindBugs/config.xml',
                 project.file('build/check/findbugs/config.xml'))
-        SourceDirectorySet sources = project.sourceSets.main.java
-        if (sources.findAll { it.exists() }.empty) {
-            return
-        }
         project.ant.findbugs(
                 effort: 'max',
                 reportLevel: 'low',
@@ -114,8 +126,10 @@ class JavaCheckPlugin extends BaseCheckPlugin<JavaCheckPlugin, Extension> {
             }
             fileset(dir: javaCompileTask.destinationDir)
             sourcePath {
-                sources.getSrcDirs().each {
-                    pathelement(location: it.absolutePath)
+                sources.each {
+                    if (it.exists()) {
+                        pathelement(location: it.absolutePath)
+                    }
                 }
             }
             auxClasspath {
@@ -129,6 +143,11 @@ class JavaCheckPlugin extends BaseCheckPlugin<JavaCheckPlugin, Extension> {
     private MethodPMD methodPMD
 
     private void performPMD(Project project) {
+        Set<File> sources = getJavaSources(project)
+        if (sources.findAll { it.exists() }.empty) {
+            return
+        }
+
         project.ant.taskdef(name: 'pmd', classname: 'net.sourceforge.pmd.ant.PMDTask') {
             classpath {
                 methodPMD.resolveDependency().each {
@@ -139,15 +158,15 @@ class JavaCheckPlugin extends BaseCheckPlugin<JavaCheckPlugin, Extension> {
 
         File configFile = copyResource(project, 'configPMD/config.xml',
                 project.file('build/check/pmd/config.xml'))
-        SourceDirectorySet sources = project.sourceSets.main.java
-        if (sources.findAll { it.exists() }.empty) {
-            return
-        }
         project.ant.pmd(
                 rulesetfiles: configFile,
                 failonerror: true) {
             formatter(type: 'xml', toFile: project.file('build/check/pmd/report.xml'))
-            sources.getSrcDirs().each { fileset(dir: it.absolutePath) }
+            sources.each {
+                if (it.exists()) {
+                    fileset(dir: it.absolutePath)
+                }
+            }
         }
     }
 
@@ -164,7 +183,7 @@ class JavaCheckPlugin extends BaseCheckPlugin<JavaCheckPlugin, Extension> {
         // FindBugs
         methodFindBugs = new MethodFindBugs(project)
         methodFindBugs.prepareDependency()
-        project.afterEvaluate { checkTestTask.dependsOn(getDepsFindBugs(project)) }
+        project.afterEvaluate { checkTestTask.dependsOn(getJavaCompileTask(project)) }
         checkTestTask << { performFindBugs(project) }
 
         // PMD

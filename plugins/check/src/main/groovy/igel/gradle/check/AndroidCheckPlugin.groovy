@@ -41,6 +41,20 @@ class AndroidCheckPlugin extends BaseCheckPlugin<AndroidCheckPlugin, Extension> 
     }
 
     @Override
+    Set<File> getJavaSources(Project project) {
+        def variant = project.android.libraryVariants[0]
+        return variant.sourceSets.inject([]) { dirs, sourceSet ->
+            dirs + sourceSet.javaDirectories
+        }
+    }
+
+    @Override
+    JavaCompile getJavaCompileTask(Project project) {
+        def variant = project.android.libraryVariants[0]
+        return variant.javaCompile
+    }
+
+    @Override
     protected Set<BaseCheckMethod> createCheckMethods(Project project) {
         return []
     }
@@ -57,6 +71,11 @@ class AndroidCheckPlugin extends BaseCheckPlugin<AndroidCheckPlugin, Extension> 
     private MethodCheckstyle methodCheckstyle
 
     private void performCheckstyle(Project project) {
+        Set<File> sources = getJavaSources(project)
+        if (sources.findAll { it.exists() }.empty) {
+            return
+        }
+
         project.ant.taskdef(resource: 'com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties') {
             classpath {
                 methodCheckstyle.resolveDependency().each {
@@ -65,14 +84,8 @@ class AndroidCheckPlugin extends BaseCheckPlugin<AndroidCheckPlugin, Extension> 
             }
         }
 
-        def variant = project.android.libraryVariants[0]
-        List<File> sources = variant.sourceSets.inject([]) { dirs, sourceSet -> dirs + sourceSet.javaDirectories }
-
         File configFile = copyResource(project, 'configCheckstyle/config.xml',
                 project.file('build/check/checkstyle/config.xml'))
-        if (sources.findAll { it.exists() }.empty) {
-            return
-        }
         project.ant.checkstyle(config: configFile, failOnViolation: false) {
             formatter(type: 'xml', toFile: project.file('build/check/checkstyle/report.xml'))
             sources.each {
@@ -85,12 +98,12 @@ class AndroidCheckPlugin extends BaseCheckPlugin<AndroidCheckPlugin, Extension> 
 
     private MethodFindBugs methodFindBugs
 
-    private List<Task> getDepsFindBugs(Project project) {
-        def variant = project.android.libraryVariants[0]
-        return [variant.javaCompile]
-    }
-
     private void performFindBugs(Project project) {
+        Set<File> sources = getJavaSources(project)
+        if (sources.findAll { it.exists() }.empty) {
+            return
+        }
+
         project.ant.taskdef(name: 'findbugs', classname: 'edu.umd.cs.findbugs.anttask.FindBugsTask') {
             classpath {
                 methodFindBugs.resolveDependency().each {
@@ -99,15 +112,9 @@ class AndroidCheckPlugin extends BaseCheckPlugin<AndroidCheckPlugin, Extension> 
             }
         }
 
-        def variant = project.android.libraryVariants[0]
-        List<File> sources = variant.sourceSets.inject([]) { dirs, sourceSet -> dirs + sourceSet.javaDirectories }
-
-        JavaCompile javaCompileTask = variant.javaCompile as JavaCompile
+        JavaCompile javaCompileTask = getJavaCompileTask(project)
         File configFile = copyResource(project, 'configFindBugs/config.xml',
                 project.file('build/check/findbugs/config.xml'))
-        if (sources.findAll { it.exists() }.empty) {
-            return
-        }
         project.ant.findbugs(
                 effort: 'max',
                 reportLevel: 'low',
@@ -138,6 +145,11 @@ class AndroidCheckPlugin extends BaseCheckPlugin<AndroidCheckPlugin, Extension> 
     private MethodPMD methodPMD
 
     private void performPMD(Project project) {
+        Set<File> sources = getJavaSources(project)
+        if (sources.findAll { it.exists() }.empty) {
+            return
+        }
+
         project.ant.taskdef(name: 'pmd', classname: 'net.sourceforge.pmd.ant.PMDTask') {
             classpath {
                 methodPMD.resolveDependency().each {
@@ -146,14 +158,8 @@ class AndroidCheckPlugin extends BaseCheckPlugin<AndroidCheckPlugin, Extension> 
             }
         }
 
-        def variant = project.android.libraryVariants[0]
-        List<File> sources = variant.sourceSets.inject([]) { dirs, sourceSet -> dirs + sourceSet.javaDirectories }
-
         File configFile = copyResource(project, 'configPMD/config.xml',
                 project.file('build/check/pmd/config.xml'))
-        if (sources.findAll { it.exists() }.empty) {
-            return
-        }
         project.ant.pmd(
                 rulesetfiles: configFile,
                 failonerror: true) {
@@ -179,7 +185,7 @@ class AndroidCheckPlugin extends BaseCheckPlugin<AndroidCheckPlugin, Extension> 
         // FindBugs
         methodFindBugs = new MethodFindBugs(project)
         methodFindBugs.prepareDependency()
-        project.afterEvaluate { checkTestTask.dependsOn(getDepsFindBugs(project)) }
+        project.afterEvaluate { checkTestTask.dependsOn(getJavaCompileTask(project)) }
         checkTestTask << { performFindBugs(project) }
 
         // PMD
