@@ -16,46 +16,35 @@
 
 package igel.gradle.check
 
-import igel.gradle.check.methods.BaseCheckMethod
+import igel.gradle.check.base.BaseMethod
+import igel.gradle.check.base.BasePlugin
 import igel.gradle.check.methods.MethodCheckstyle
 import igel.gradle.check.methods.MethodFindBugs
 import igel.gradle.check.methods.MethodPMD
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.compile.JavaCompile
 
-class AndroidCheckPlugin extends BaseCheckPlugin<AndroidCheckPlugin, Extension> {
+class JavaPlugin extends BasePlugin<JavaPlugin, JavaPluginExtension> {
 
-    static class Extension extends BaseCheckPlugin.Extension<AndroidCheckPlugin> {
-
-        String valueAndroid
-
-        Extension(Project project, AndroidCheckPlugin plugin) {
-            super(project, plugin)
-        }
-
-    }
-
-    AndroidCheckPlugin() {
-        super(Extension.class)
+    JavaPlugin() {
+        super(JavaPluginExtension.class)
     }
 
     @Override
     Set<File> getJavaSources(Project project) {
-        def variant = project.android.libraryVariants[0]
-        return variant.sourceSets.inject([]) { dirs, sourceSet ->
-            dirs + sourceSet.javaDirectories
-        }
+        SourceDirectorySet sources = project.sourceSets.main.java
+        return sources.srcDirs
     }
 
     @Override
     JavaCompile getJavaCompileTask(Project project) {
-        def variant = project.android.libraryVariants[0]
-        return variant.javaCompile
+        return project.tasks.find { it instanceof JavaCompile } as JavaCompile
     }
 
     @Override
-    protected Set<BaseCheckMethod> createCheckMethods(Project project) {
+    protected Set<BaseMethod> createCheckMethods(Project project) {
         return [
                 new MethodCheckstyle(project),
                 new MethodFindBugs(project),

@@ -16,12 +16,14 @@
 
 package igel.gradle.check.methods
 
+import igel.gradle.check.base.BaseMethod
+import igel.gradle.check.base.BaseMethodExtension
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
 
-class MethodCheckstyle extends BaseCheckMethod<Extension> {
+class MethodCheckstyle extends BaseMethod<Extension> {
 
-    static class Extension extends BaseCheckMethod.Extension<MethodCheckstyle> {
+    static class Extension extends BaseMethodExtension<MethodCheckstyle> {
 
         Extension(MethodCheckstyle method) {
             super(method,

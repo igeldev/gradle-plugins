@@ -7,7 +7,7 @@ import org.gradle.testkit.runner.GradleRunner
 
 import java.nio.file.Files
 
-abstract class BaseCheckPluginTest {
+abstract class BasePluginTest {
 
     private static void gradle(File testDir, String... tasks) {
         List<String> arguments = ['--stacktrace']

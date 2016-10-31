@@ -16,12 +16,14 @@
 
 package igel.gradle.check.methods
 
+import igel.gradle.check.base.BaseMethod
+import igel.gradle.check.base.BaseMethodExtension
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
 
-class MethodFindBugs extends BaseCheckMethod<Extension> {
+class MethodFindBugs extends BaseMethod<Extension> {
 
-    static class Extension extends BaseCheckMethod.Extension<MethodFindBugs> {
+    static class Extension extends BaseMethodExtension<MethodFindBugs> {
 
         Extension(MethodFindBugs method) {
             super(method,

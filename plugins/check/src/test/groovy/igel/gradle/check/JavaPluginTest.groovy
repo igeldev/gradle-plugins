@@ -2,7 +2,7 @@ package igel.gradle.check
 
 import org.junit.Test
 
-class JavaCheckPluginTest extends BaseCheckPluginTest {
+class JavaPluginTest extends BasePluginTest {
 
     @Test
     void testJava00Empty() {
