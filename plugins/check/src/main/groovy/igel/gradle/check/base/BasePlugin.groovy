@@ -16,12 +16,11 @@
 
 package igel.gradle.check.base
 
-import igel.gradle.check.BaseProjectHelper
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.Task
 
-abstract class BasePlugin<P extends BasePlugin, E extends BasePluginExtension> implements Plugin<Project> {
+abstract class BasePlugin<P extends ProjectHelper, E extends BasePluginExtension> implements Plugin<Project> {
 
     final Class<E> extensionClass
     private Set<BaseMethod> methods
@@ -34,20 +33,33 @@ abstract class BasePlugin<P extends BasePlugin, E extends BasePluginExtension> i
         return methods
     }
 
-    abstract Set<File> getJavaSources(Project project)
-
-    abstract JavaCompile getJavaCompileTask(Project project)
+    protected abstract P createProjectHelper(Project project)
 
     protected abstract Set<BaseMethod> createCheckMethods(Project project)
-
-    protected abstract void doApply(Project project)
 
     @Override
     final void apply(Project target) {
         methods = createCheckMethods(target)
         target.extensions.create('check', extensionClass, target, this)
 
-        doApply(target)
+        Task checkTestTask = target.task('check-test')
+        target.afterEvaluate { target.tasks['check'].dependsOn checkTestTask }
+
+        ProjectHelper projectHelper = createProjectHelper(target)
+        methods.each { method ->
+            method.prepareDependency()
+            checkTestTask << {
+                method.extension.resolveConfig()
+                method.performCheck(
+                        projectHelper.getJavaSources(),
+                        projectHelper.getJavaCompileTask(),
+                        method.extension.configFile,
+                        method.extension.reportFile)
+            }
+        }
+
+        // FindBugs requires compiled code
+        target.afterEvaluate { checkTestTask.dependsOn(projectHelper.getJavaCompileTask()) }
     }
 
 }

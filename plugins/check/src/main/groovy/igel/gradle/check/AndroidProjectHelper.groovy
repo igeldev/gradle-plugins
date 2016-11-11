@@ -16,31 +16,28 @@
 
 package igel.gradle.check
 
-import igel.gradle.check.base.BaseMethod
-import igel.gradle.check.base.BasePlugin
-import igel.gradle.check.methods.MethodCheckstyle
-import igel.gradle.check.methods.MethodFindBugs
-import igel.gradle.check.methods.MethodPMD
+import igel.gradle.check.base.ProjectHelper
 import org.gradle.api.Project
+import org.gradle.api.tasks.compile.JavaCompile
 
-class JavaPlugin extends BasePlugin<JavaProjectHelper, JavaPluginExtension> {
+class AndroidProjectHelper extends ProjectHelper {
 
-    JavaPlugin() {
-        super(JavaPluginExtension.class)
+    AndroidProjectHelper(Project project) {
+        super(project)
     }
 
     @Override
-    protected JavaProjectHelper createProjectHelper(Project project) {
-        return new JavaProjectHelper(project)
+    Set<File> getJavaSources() {
+        def variant = project.android.libraryVariants[0]
+        return variant.sourceSets.inject([]) { dirs, sourceSet ->
+            dirs + sourceSet.javaDirectories
+        }
     }
 
     @Override
-    protected Set<BaseMethod> createCheckMethods(Project project) {
-        return [
-                new MethodCheckstyle(project),
-                new MethodFindBugs(project),
-                new MethodPMD(project),
-        ]
+    JavaCompile getJavaCompileTask() {
+        def variant = project.android.libraryVariants[0]
+        return variant.javaCompile
     }
 
 }

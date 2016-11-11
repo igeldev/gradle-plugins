@@ -22,27 +22,16 @@ import igel.gradle.check.methods.MethodCheckstyle
 import igel.gradle.check.methods.MethodFindBugs
 import igel.gradle.check.methods.MethodPMD
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.tasks.compile.JavaCompile
 
-class AndroidPlugin extends BasePlugin<AndroidPlugin, AndroidPluginExtension> {
+class AndroidPlugin extends BasePlugin<AndroidProjectHelper, AndroidPluginExtension> {
 
     AndroidPlugin() {
         super(AndroidPluginExtension.class)
     }
 
     @Override
-    Set<File> getJavaSources(Project project) {
-        def variant = project.android.libraryVariants[0]
-        return variant.sourceSets.inject([]) { dirs, sourceSet ->
-            dirs + sourceSet.javaDirectories
-        }
-    }
-
-    @Override
-    JavaCompile getJavaCompileTask(Project project) {
-        def variant = project.android.libraryVariants[0]
-        return variant.javaCompile
+    protected AndroidProjectHelper createProjectHelper(Project project) {
+        return new AndroidProjectHelper(project)
     }
 
     @Override
@@ -52,27 +41,6 @@ class AndroidPlugin extends BasePlugin<AndroidPlugin, AndroidPluginExtension> {
                 new MethodFindBugs(project),
                 new MethodPMD(project),
         ]
-    }
-
-    @Override
-    protected void doApply(Project project) {
-        Task checkTestTask = project.task('check-test')
-        project.afterEvaluate { project.tasks['check'].dependsOn checkTestTask }
-
-        methods.each { method ->
-            method.prepareDependency()
-            checkTestTask << {
-                method.extension.resolveConfig()
-                method.performCheck(
-                        getJavaSources(project),
-                        getJavaCompileTask(project),
-                        method.extension.configFile,
-                        method.extension.reportFile)
-            }
-        }
-
-        // FindBugs requires compiled code
-        project.afterEvaluate { checkTestTask.dependsOn(getJavaCompileTask(project)) }
     }
 
 }
