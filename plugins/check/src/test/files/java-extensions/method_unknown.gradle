@@ -1,0 +1,20 @@
+plugins {
+    id 'igel.check.java'
+}
+
+apply plugin: 'java'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+}
+
+check {
+    valueCommon = 'value common'
+    methods {
+        Unknown {
+        }
+    }
+}

@@ -1,0 +1,20 @@
+plugins {
+    id 'igel.check.java'
+}
+
+apply plugin: 'java'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+}
+
+import igel.gradle.check.JavaPluginExtension
+
+task('verify') << {
+    JavaPluginExtension extension = project.extensions.findByName('check')
+    assert extension != null
+    assert extension.methods.size() == 0
+}
