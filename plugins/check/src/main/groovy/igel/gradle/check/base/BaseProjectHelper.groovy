@@ -19,11 +19,11 @@ package igel.gradle.check.base
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
 
-abstract class ProjectHelper {
+abstract class BaseProjectHelper {
 
     final Project project
 
-    ProjectHelper(Project project) {
+    BaseProjectHelper(Project project) {
         this.project = project
     }
 

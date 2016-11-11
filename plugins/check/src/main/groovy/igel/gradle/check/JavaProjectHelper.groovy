@@ -16,12 +16,12 @@
 
 package igel.gradle.check
 
-import igel.gradle.check.base.ProjectHelper
+import igel.gradle.check.base.BaseProjectHelper
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.compile.JavaCompile
 
-class JavaProjectHelper extends ProjectHelper {
+class JavaProjectHelper extends BaseProjectHelper {
 
     JavaProjectHelper(Project project) {
         super(project)

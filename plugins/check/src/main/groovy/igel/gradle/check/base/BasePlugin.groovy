@@ -20,7 +20,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 
-abstract class BasePlugin<P extends ProjectHelper, E extends BasePluginExtension> implements Plugin<Project> {
+abstract class BasePlugin<P extends BaseProjectHelper, E extends BasePluginExtension> implements Plugin<Project> {
 
     final Class<E> extensionClass
     private Set<BaseMethod> methods
@@ -45,7 +45,7 @@ abstract class BasePlugin<P extends ProjectHelper, E extends BasePluginExtension
         Task checkTestTask = target.task('check-test')
         target.afterEvaluate { target.tasks['check'].dependsOn checkTestTask }
 
-        ProjectHelper projectHelper = createProjectHelper(target)
+        P projectHelper = createProjectHelper(target)
         methods.each { method ->
             method.prepareDependency()
             checkTestTask << {
