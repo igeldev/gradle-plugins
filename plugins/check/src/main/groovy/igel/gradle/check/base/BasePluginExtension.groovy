@@ -39,7 +39,8 @@ class BasePluginExtension<P extends BasePlugin> {
 
         this.methods = project.container(BaseMethodExtension.class) { String name ->
             if (!checkMethodMapAlias.containsKey(name)) {
-                throw new GradleException("Unknown check method '$name'.")
+                throw new GradleException("Unknown check method '$name'. " +
+                        "Use one of ${checkMethodMapAlias.keySet().sort()}")
             }
             return checkMethodMapAlias[name].extension
         }
