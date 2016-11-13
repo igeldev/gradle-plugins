@@ -21,7 +21,9 @@ import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.compile.JavaCompile
 
-class JavaProjectHelper extends BaseProjectHelper {
+class JavaProjectHelper extends BaseProjectHelper<JavaPluginExtension> {
+
+    final Class<JavaPluginExtension> extensionClass = JavaPluginExtension.class
 
     JavaProjectHelper(Project project) {
         super(project)

@@ -20,7 +20,9 @@ import igel.gradle.check.base.BaseProjectHelper
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
 
-class AndroidProjectHelper extends BaseProjectHelper {
+class AndroidProjectHelper extends BaseProjectHelper<AndroidPluginExtension> {
+
+    final Class<AndroidPluginExtension> extensionClass = AndroidPluginExtension.class
 
     AndroidProjectHelper(Project project) {
         super(project)

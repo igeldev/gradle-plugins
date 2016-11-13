@@ -19,12 +19,25 @@ package igel.gradle.check.base
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
 
-abstract class BaseProjectHelper {
+abstract class BaseProjectHelper<E extends BasePluginExtension> {
+
+    private static final String EXTENSION_NAME = 'check'
 
     final Project project
+    private E extension
 
     BaseProjectHelper(Project project) {
         this.project = project
+    }
+
+    abstract Class<E> getExtensionClass()
+
+    void createExtension(Set<BaseMethod> methods) {
+        extension = project.extensions.create(EXTENSION_NAME, extensionClass, project, methods)
+    }
+
+    E getExtension() {
+        return extension
     }
 
     abstract Set<File> getJavaSources()

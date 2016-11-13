@@ -24,17 +24,15 @@ import org.gradle.api.Project
 class BasePluginExtension<P extends BasePlugin> {
 
     private final Project project
-    private final P plugin
     private final Map<String, BaseMethod> checkMethodMap
     final NamedDomainObjectCollection<BaseMethodExtension> methods
     String valueCommon
 
-    BasePluginExtension(Project project, P plugin) {
+    BasePluginExtension(Project project, Set<BaseMethod> methods) {
         this.project = project
-        this.plugin = plugin
 
-        Map<String, BaseMethod> checkMethodMapAlias = Collections.unmodifiableMap(
-                plugin.methods.collectEntries { [it.name, it] })
+        Map<String, BaseMethod> checkMethodMapAlias =
+                Collections.unmodifiableMap(methods.collectEntries { [it.name, it] })
         this.checkMethodMap = checkMethodMapAlias
 
         this.methods = project.container(BaseMethodExtension.class) { String name ->

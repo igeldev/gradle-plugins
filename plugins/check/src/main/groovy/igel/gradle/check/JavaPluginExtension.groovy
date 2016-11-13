@@ -16,6 +16,7 @@
 
 package igel.gradle.check
 
+import igel.gradle.check.base.BaseMethod
 import igel.gradle.check.base.BasePluginExtension
 import org.gradle.api.Project
 
@@ -23,8 +24,8 @@ class JavaPluginExtension extends BasePluginExtension<JavaPlugin> {
 
     String valueJava
 
-    JavaPluginExtension(Project project, JavaPlugin plugin) {
-        super(project, plugin)
+    JavaPluginExtension(Project project, Set<BaseMethod> methods) {
+        super(project, methods)
     }
 
 }

@@ -39,13 +39,12 @@ abstract class BasePlugin<P extends BaseProjectHelper, E extends BasePluginExten
 
     @Override
     final void apply(Project target) {
-        methods = createCheckMethods(target)
-        target.extensions.create('check', extensionClass, target, this)
-
         Task checkTestTask = target.task('check-test')
         target.afterEvaluate { target.tasks['check'].dependsOn checkTestTask }
 
         P projectHelper = createProjectHelper(target)
+        methods = createCheckMethods(target)
+        projectHelper.createExtension(methods)
         methods.each { method ->
             method.prepareDependency()
             checkTestTask << {
