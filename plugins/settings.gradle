@@ -1,2 +1,6 @@
+import igel.gradle.plugins.Disablement
+
+Disablement.init(gradle)
+
 include 'common'
 include 'publish'

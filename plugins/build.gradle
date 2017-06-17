@@ -1,14 +1,13 @@
+import igel.gradle.plugins.Disablement
+
 buildscript {
     repositories {
         mavenLocal()
         jcenter()
     }
 
-    // sometimes we cannot use 'igel.publish.groovy' plugin
-    // to publish itself so we will use simple 'maven-publish'
-    // gradle property 'disable-self' will be a flag
-    if (!project.hasProperty('disable-self')) {
-        dependencies {
+    dependencies {
+        if (!Disablement.modulePublish) {
             classpath 'igel.gradle:publish:1.0.0'
             classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
         }

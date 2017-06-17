@@ -1,3 +1,5 @@
+import igel.gradle.plugins.Disablement
+
 apply plugin: 'groovy'
 
 dependencies {
@@ -7,7 +9,7 @@ dependencies {
 description = 'Utility classes for Gradle build scripts.'
 version = '1.0.0'
 
-if (!project.hasProperty('disable-self')) {
+if (!Disablement.modulePublish) {
     apply plugin: 'igel.publish.groovy'
 
     apply plugin: 'com.jfrog.bintray'
