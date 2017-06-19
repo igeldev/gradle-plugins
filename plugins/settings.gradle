@@ -3,4 +3,5 @@ import igel.gradle.plugins.Disablement
 Disablement.init(gradle)
 
 include 'common'
+include 'gradle-test-runner'
 include 'publish'

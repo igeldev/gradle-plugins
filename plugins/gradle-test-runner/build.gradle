@@ -1,0 +1,28 @@
+import igel.gradle.plugins.Disablement
+
+apply plugin: 'groovy'
+
+dependencies {
+    compile gradleApi()
+    compile gradleTestKit()
+}
+
+description = 'Gradle runner to test plugins.'
+version = '1.0.0'
+
+if (!Disablement.modulePublish) {
+    apply plugin: 'igel.publish.groovy'
+
+    apply plugin: 'com.jfrog.bintray'
+
+    bintray {
+        publications = ['maven']
+        user = project.hasProperty('bintray.user') ? project['bintray.user'] : 'anonymous'
+        key = project.hasProperty('bintray.key') ? project['bintray.key'] : '???'
+        pkg {
+            repo = 'gradle-plugins'
+            name = 'gradle-test-runner'
+            version.name = project.version
+        }
+    }
+}
