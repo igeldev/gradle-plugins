@@ -6,27 +6,27 @@ class JavaPublishPluginTest extends BasePublishPluginTest {
 
     @Test
     void testJava00Empty() {
-        runPublishTest 'src/test/files/java-00-empty'
+        runPublishTest 'java-00-empty'
     }
 
     @Test
     void testJava01Simple() {
-        runPublishTest 'src/test/files/java-01-simple'
+        runPublishTest 'java-01-simple'
     }
 
     @Test
     void testJava02VersionRange() {
-        runPublishTest 'src/test/files/java-02-version-range'
+        runPublishTest 'java-02-version-range'
     }
 
     @Test
     void testJava03VersionVariable() {
-        runPublishTest 'src/test/files/java-03-version-variable'
+        runPublishTest 'java-03-version-variable'
     }
 
     @Test
     void testJava04Provided() {
-        runPublishTest 'src/test/files/java-04-provided'
+        runPublishTest 'java-04-provided'
     }
 
 }

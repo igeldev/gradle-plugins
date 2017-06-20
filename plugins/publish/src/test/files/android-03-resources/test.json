@@ -65,10 +65,7 @@
         "index.html",
         "overview-tree.html",
         "package-list",
-        "resources/background.gif",
-        "resources/tab.gif",
-        "resources/titlebar_end.gif",
-        "resources/titlebar.gif",
+        "script.js",
         "stylesheet.css"
       ]
     }

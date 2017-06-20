@@ -4,16 +4,27 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import org.apache.commons.io.FileUtils
-import org.gradle.testkit.runner.GradleRunner
+import igel.gradle.test.runner.GradleRule
+import igel.gradle.test.runner.GradleTestRunner
 import org.junit.Assert
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 
-import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
 
 abstract class BasePublishPluginTest {
+
+    @Rule
+    public final GradleRule gradle = new GradleRule(
+            new File('src/test/files/'),
+            new File('build/gradle-tests/'),
+            '2.13',
+            ['--stacktrace'])
+
+    @Rule
+    public final TemporaryFolder tempDir = new TemporaryFolder()
 
     private static String formatXml(String xmlText) {
         Node node = new XmlParser().parseText(xmlText)
@@ -25,17 +36,6 @@ abstract class BasePublishPluginTest {
         printer.print(node)
 
         return stringWriter.toString()
-    }
-
-    private static void gradle(File testDir, File repoDir, String... tasks) {
-        List<String> arguments = ['-Prepo=' + repoDir.absolutePath, '--stacktrace']
-        arguments += tasks as List<String>
-        GradleRunner.create()
-                .withPluginClasspath()
-                .withProjectDir(testDir)
-                .withArguments(arguments)
-                .forwardOutput()
-                .build()
     }
 
     private static void checkRepo(File repoDir, JsonArray repoSpec) {
@@ -90,31 +90,22 @@ abstract class BasePublishPluginTest {
         }
     }
 
-    protected static void runPublishTest(String testPath) {
-        File dir = new File(testPath)
-        JsonObject testSpec = new JsonParser()
-                .parse(new File(dir, 'test.json').text).asJsonObject
+    protected void runPublishTest(String testPath) {
+        File testJsonFile = new File("src/test/files/$testPath/test.json")
+        JsonObject testSpec = new JsonParser().parse(testJsonFile.text).asJsonObject
 
         println '-' * 60
         println "Test name: ${testSpec.get('name').asString}"
         println "Description:\n${testSpec.get('description').asString}\n"
 
-        File tempDir = Files.createTempDirectory('junit').toFile()
-        try {
-            File testDir = new File(tempDir, "test/$dir.name")
-            File repoDir = new File(tempDir, 'repo')
+        // run gradle project
+        File repoDir = tempDir.newFolder(testPath)
+        GradleTestRunner runner = gradle.create(testPath, 'build.gradle', testPath,
+                ['-Prepo=' + repoDir.absolutePath])
+        runner.buildSuccess([testSpec.get('task').asString])
 
-            // copy test project sources
-            FileUtils.copyDirectory(dir, testDir)
-
-            // run gradle project
-            gradle(testDir, repoDir, testSpec.get('task').asString)
-
-            // check repo content
-            checkRepo(repoDir, testSpec.get('repo').asJsonArray)
-        } finally {
-            FileUtils.deleteDirectory(tempDir)
-        }
+        // check repo content
+        checkRepo(repoDir, testSpec.get('repo').asJsonArray)
     }
 
 }

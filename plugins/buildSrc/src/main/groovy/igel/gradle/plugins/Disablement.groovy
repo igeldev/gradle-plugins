@@ -36,11 +36,13 @@ class Disablement implements GroovyInterceptable {
      */
     static void init(Gradle gradle) {
         modulePublish = parseBoolean(gradle, 'disable.publish', false)
+        moduleGradleTestRunner = parseBoolean(gradle, 'disable.gradle-test-runner', false)
     }
 
     /**
      * Module 'publish' disablement.
      */
     static boolean modulePublish
+    static boolean moduleGradleTestRunner
 
 }

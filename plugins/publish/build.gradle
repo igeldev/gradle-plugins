@@ -6,6 +6,8 @@ apply plugin: 'java-gradle-plugin'
 dependencies {
     compile gradleApi()
     runtime 'com.android.tools.build:gradle:2.1.0'
+    testCompile gradleTestKit()
+    testCompile project(':gradle-test-runner')
 }
 
 description = 'Gradle plug-ins to publish artifacts to Maven local and JCenter repositories.'

@@ -6,32 +6,32 @@ class GroovyPublishPluginTest extends BasePublishPluginTest {
 
     @Test
     void testGroovy00Empty() {
-        runPublishTest 'src/test/files/groovy-00-empty'
+        runPublishTest 'groovy-00-empty'
     }
 
     @Test
     void testGroovy01Simple() {
-        runPublishTest 'src/test/files/groovy-01-simple'
+        runPublishTest 'groovy-01-simple'
     }
 
     @Test
     void testGroovy02GradlePlugin() {
-        runPublishTest 'src/test/files/groovy-02-gradle-plugin'
+        runPublishTest 'groovy-02-gradle-plugin'
     }
 
     @Test
     void testGroovy03VersionRange() {
-        runPublishTest 'src/test/files/groovy-03-version-range'
+        runPublishTest 'groovy-03-version-range'
     }
 
     @Test
     void testGroovy04Provided() {
-        runPublishTest 'src/test/files/groovy-04-provided'
+        runPublishTest 'groovy-04-provided'
     }
 
     @Test
     void testGroovy05LocalDeps() {
-        runPublishTest 'src/test/files/groovy-05-local-deps'
+        runPublishTest 'groovy-05-local-deps'
     }
 
 }

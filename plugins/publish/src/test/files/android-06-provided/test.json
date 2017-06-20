@@ -67,10 +67,6 @@
         "igel/example/android_lib/package-frame.html",
         "igel/example/android_lib/package-summary.html",
         "igel/example/android_lib/package-tree.html",
-        "resources/background.gif",
-        "resources/tab.gif",
-        "resources/titlebar_end.gif",
-        "resources/titlebar.gif",
         "allclasses-frame.html",
         "allclasses-noframe.html",
         "constant-values.html",
@@ -80,6 +76,7 @@
         "index.html",
         "overview-tree.html",
         "package-list",
+        "script.js",
         "stylesheet.css"
       ]
     }

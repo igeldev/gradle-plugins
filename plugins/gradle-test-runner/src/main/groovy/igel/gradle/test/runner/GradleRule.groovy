@@ -31,7 +31,7 @@ class GradleRule implements TestRule {
 
     private void checkInsideTest() {
         if (description == null) {
-            throw new IllegalStateException("$GradleRule.class.simpleName is used outside test")
+            throw new IllegalStateException("${GradleRule.class.simpleName} is used outside test")
         }
     }
 
