@@ -1,0 +1,59 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:${property('gradle.plugin.version')}"
+    }
+}
+
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion property('android.sdk.version') as int
+    buildToolsVersion property('android.build.tools.version')
+
+    defaultConfig {
+        minSdkVersion property('android.min.sdk.version') as int
+        targetSdkVersion property('android.sdk.version') as int
+
+        testApplicationId 'igel.example_android_application.test'
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+    }
+
+    productFlavors {
+        flavor1 {
+            buildConfigField('String', 'FLAVOR_VALUE', '"Value of Flavor #1"')
+        }
+        flavor2 {
+            buildConfigField('String', 'FLAVOR_VALUE', '"Value of Flavor #2"')
+        }
+    }
+
+    sourceSets {
+        androidTest {
+            java.srcDirs += project.file('src/test-common/java')
+        }
+        test {
+            java.srcDirs += project.file('src/test-common/java')
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.robolectric:robolectric:3.2.2'
+
+    androidTestCompile 'com.android.support.test:rules:0.5'
+    androidTestCompile 'com.android.support.test:runner:0.5'
+}

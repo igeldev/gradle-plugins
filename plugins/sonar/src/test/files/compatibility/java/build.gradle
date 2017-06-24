@@ -1,0 +1,43 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+}
+
+apply plugin: 'java'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'com.google.guava:guava:21.0'
+    testCompile 'com.google.code.gson:gson:2.8.0'
+    testCompile 'junit:junit:4.12'
+}
+
+sourceSets.main {
+    java.srcDirs += project.file('src/add/java')
+}
+
+afterEvaluate {
+    File genDir = new File(project.buildDir, 'gen/java')
+    File genFile = new File(genDir, 'igel/example_java/GenClassJava.java')
+
+    sourceSets.main {
+        java.srcDirs += genDir
+    }
+
+    Task generateTask = task('generate').doLast {
+        genFile.parentFile.mkdirs()
+        genFile.delete()
+        genFile << '''\
+            package igel.example_java;
+            public class GenClassJava {
+                public static final String someValue = "bla bla bla";
+            }
+        '''.stripIndent()
+    }
+
+    tasks.withType(JavaCompile).each { it.dependsOn generateTask }
+}

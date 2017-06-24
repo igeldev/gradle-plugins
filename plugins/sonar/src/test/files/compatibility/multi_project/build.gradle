@@ -1,0 +1,15 @@
+import igel.example_build_src.BuildScriptHelper
+
+BuildScriptHelper.printChecksum(project)
+
+allprojects {
+    buildscript {
+        repositories {
+            jcenter()
+        }
+    }
+
+    repositories {
+        jcenter()
+    }
+}

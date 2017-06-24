@@ -1,0 +1,45 @@
+buildscript {
+    dependencies {
+        classpath "com.android.tools.build:gradle:${property('gradle.plugin.version')}"
+    }
+}
+
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion property('android.sdk.version') as int
+    buildToolsVersion property('android.build.tools.version')
+
+    defaultConfig {
+        minSdkVersion property('android.min.sdk.version') as int
+        targetSdkVersion property('android.sdk.version') as int
+
+        buildConfigField('boolean', 'testBooleanValue', 'false')
+
+        testApplicationId 'igel.example_android_application.test'
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+    }
+
+    productFlavors {
+        modA {
+            buildConfigField('String', 'MOD', '"A"')
+        }
+        modB {
+            buildConfigField('String', 'MOD', '"B"')
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    modACompile project(path: ':android:library', configuration: 'flavor1Release')
+    modBCompile project(path: ':android:library', configuration: 'flavor2Release')
+
+    testCompile 'junit:junit:4.12'
+
+    androidTestCompile 'com.android.support.test:rules:0.5'
+    androidTestCompile 'com.android.support.test:runner:0.5'
+}

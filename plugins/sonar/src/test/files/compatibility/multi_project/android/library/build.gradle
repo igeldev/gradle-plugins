@@ -1,0 +1,44 @@
+buildscript {
+    dependencies {
+        classpath "com.android.tools.build:gradle:${property('gradle.plugin.version')}"
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion property('android.sdk.version') as int
+    buildToolsVersion property('android.build.tools.version')
+
+    publishNonDefault true
+
+    defaultConfig {
+        minSdkVersion property('android.min.sdk.version') as int
+        targetSdkVersion property('android.sdk.version') as int
+
+        testApplicationId 'igel.example_android_library.test'
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+    }
+
+    productFlavors {
+        flavor1 {
+            buildConfigField('int', 'FLAVOR_NUMBER', '1')
+        }
+        flavor2 {
+            buildConfigField('int', 'FLAVOR_NUMBER', '2')
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    compile project(':java')
+
+    testCompile 'junit:junit:4.12'
+
+    androidTestCompile 'com.android.support.test:rules:0.5'
+    androidTestCompile 'com.android.support.test:runner:0.5'
+}

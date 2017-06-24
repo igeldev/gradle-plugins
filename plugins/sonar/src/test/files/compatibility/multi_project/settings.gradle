@@ -1,0 +1,4 @@
+include ':android:application'
+include ':android:library'
+include ':groovy'
+include ':java'

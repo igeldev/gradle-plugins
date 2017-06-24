@@ -1,0 +1,44 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+}
+
+apply plugin: 'groovy'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile localGroovy()
+    compile 'com.google.guava:guava:21.0'
+    testCompile 'com.google.code.gson:gson:2.8.0'
+    testCompile 'junit:junit:4.12'
+}
+
+sourceSets.main {
+    groovy.srcDirs += project.file('src/add/groovy')
+}
+
+afterEvaluate {
+    File genDir = new File(project.buildDir, 'gen/groovy')
+    File genFile = new File(genDir, 'igel/example_groovy/GenClassGroovy.groovy')
+
+    sourceSets.main {
+        groovy.srcDirs += genDir
+    }
+
+    Task generateTask = task('generate').doLast {
+        genFile.parentFile.mkdirs()
+        genFile.delete()
+        genFile << '''\
+            package igel.example_groovy
+            class GenClassGroovy {
+                static final String someValue = 'bla bla bla'
+            }
+        '''.stripIndent()
+    }
+
+    tasks.withType(GroovyCompile).each { it.dependsOn generateTask }
+}
